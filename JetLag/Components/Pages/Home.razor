@@ -1,7 +1,41 @@
-﻿@page "/"
+@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Join Lobby</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="join-lobby-page">
+    <div class="join-lobby-card">
+        <h1 class="join-lobby-title">Join Lobby</h1>
 
-Welcome to your new app.
+        <div class="join-lobby-form-group">
+            <label for="playerName">Name</label>
+            <input id="playerName" class="join-lobby-input" @bind="playerName" />
+        </div>
+
+        <div class="join-lobby-actions">
+            <button class="join-lobby-button join-lobby-button-primary"
+                    @onclick="OnPlayClicked"
+                    disabled="@string.IsNullOrWhiteSpace(playerName)">
+                Play
+            </button>
+            <button class="join-lobby-button join-lobby-button-secondary"
+                    @onclick="OnCreatePrivateRoomClicked"
+                    disabled="@string.IsNullOrWhiteSpace(playerName)">
+                Create Private Room
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string playerName = string.Empty;
+
+    private void OnPlayClicked()
+    {
+        // TODO: Implement navigation to lobby / game
+    }
+
+    private void OnCreatePrivateRoomClicked()
+    {
+        // TODO: Implement create private room flow
+    }
+}
