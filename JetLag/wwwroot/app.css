@@ -16,6 +16,14 @@ body {
     background-size: auto;
 }
 
+@font-face {
+    font-family: 'Coolvetica';
+    src: url('/Fonts/Coolvetica.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -67,6 +75,7 @@ body {
     font-size: 1.75rem;
     font-weight: 600;
     letter-spacing: 0.03em;
+    font-family: 'Coolvetica', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .join-lobby-form-group {
