@@ -21,4 +21,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\InappropriateNames.txt" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,7 @@
 @page "/"
 @using JetLag.Resources
+@using JetLag.Scripts.Utility
+
 @inject IStringLocalizer<TextConstants> L
 
 
@@ -16,11 +18,11 @@
 
         <div class="join-lobby-actions">
             <button class="join-lobby-button join-lobby-button-primary" @onclick="OnPlayClicked"
-                disabled="@string.IsNullOrWhiteSpace(playerName)">
+                disabled="@IsInappropriateName(playerName)">
                 @L["Play"]
             </button>
             <button class="join-lobby-button join-lobby-button-secondary" @onclick="OnCreatePrivateRoomClicked"
-                disabled="@string.IsNullOrWhiteSpace(playerName)">
+                disabled="@IsInappropriateName(playerName)">
                 @L["CreatePrivateRoom"]
             </button>
         </div>
@@ -30,13 +32,45 @@
 @code {
     private string playerName = string.Empty;
 
+    private static readonly HashSet<string> inappropriateNames =
+    ReadUtility.ReadRecourseTextFile("InappropriateNames").ToHashSet();
+
+
+    /// <summary>
+    /// Transitions to a public lobby.
+    /// <summary>
     private void OnPlayClicked()
     {
         // TODO: Implement navigation to lobby / game
     }
 
+    /// <summary>
+    /// Transitions to a private lobby.
+    /// <summary>
     private void OnCreatePrivateRoomClicked()
     {
         // TODO: Implement create private room flow
+    }
+
+    /// <summary>
+    /// Checks if a name is inappropriate.
+    /// </summary>
+    /// <param name="name">The name to check.</param>
+    /// <returns>True if the name is inappropriate, false otherwise.</returns>
+    /// <summary>
+    private bool IsInappropriateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return true;
+
+        name = name.ToLower();
+
+        foreach (var inappropriateName in inappropriateNames)
+        {
+            if (name.Contains(inappropriateName))
+                return true;
+        }
+
+        return false;
     }
 }
