@@ -69,6 +69,8 @@
     /// <summary>
     private bool IsInappropriateName(string name)
     {
+        // TODO-SERVER : Move this to the sever side, on the server call another comerical API to check if the name is
+        // inappropriate.
         name = name.ToLower();
 
         foreach (var inappropriateName in inappropriateNames)
