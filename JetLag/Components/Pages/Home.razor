@@ -18,11 +18,11 @@
 
         <div class="join-lobby-actions">
             <button class="join-lobby-button join-lobby-button-primary" @onclick="OnPlayClicked"
-                disabled="@IsInappropriateName(playerName)">
+                disabled="@RejectPlayerName(playerName)">
                 @L["Play"]
             </button>
             <button class="join-lobby-button join-lobby-button-secondary" @onclick="OnCreatePrivateRoomClicked"
-                disabled="@IsInappropriateName(playerName)">
+                disabled="@RejectPlayerName(playerName)">
                 @L["CreatePrivateRoom"]
             </button>
         </div>
@@ -53,6 +53,15 @@
     }
 
     /// <summary>
+    /// Rejects a player name if it is empty or inappropriate.
+    /// </summary>
+    /// <param name="name">The name to check.</param>
+    /// <returns>True if the name is rejected, false otherwise.</returns>
+    /// <summary>
+    private bool RejectPlayerName(string name)
+    => string.IsNullOrWhiteSpace(name) || IsInappropriateName(name);
+
+    /// <summary>
     /// Checks if a name is inappropriate.
     /// </summary>
     /// <param name="name">The name to check.</param>
@@ -60,9 +69,6 @@
     /// <summary>
     private bool IsInappropriateName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            return true;
-
         name = name.ToLower();
 
         foreach (var inappropriateName in inappropriateNames)
