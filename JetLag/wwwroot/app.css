@@ -6,6 +6,14 @@ html,
 body {
     margin: 0;
     padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background-color: #245195;
+    background-image: url('/Images/topography.svg');
+    background-repeat: repeat;
+    background-size: auto;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -40,10 +48,6 @@ body {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    background-color: #245195 !important;
-    background-image: url('/Images/topography.svg') !important;
-    background-repeat: repeat !important;
-    background-size: auto !important;
 }
 
 .join-lobby-card {
