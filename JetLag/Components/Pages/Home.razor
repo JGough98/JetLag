@@ -9,11 +9,10 @@
 
 <div class="join-lobby-page">
     <div class="join-lobby-card">
-        <h1 class="join-lobby-title">@L["JoinLobby"]</h1>
+        <h1 class="join-lobby-title">@L["AppName"]</h1>
 
         <div class="join-lobby-form-group">
-            <label for="playerName">@L["Name"]</label>
-            <input id="playerName" class="join-lobby-input" @bind="playerName" />
+            <input id="playerName" class="join-lobby-input" placeholder='@L["EnterName"]' @bind="playerName" />
         </div>
 
         <div class="join-lobby-actions">

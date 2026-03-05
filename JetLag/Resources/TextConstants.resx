@@ -126,8 +126,8 @@
   <data name="JoinLobby" xml:space="preserve">
     <value>Join Lobby</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
+  <data name="EnterName" xml:space="preserve">
+    <value>Enter Name</value>
   </data>
   <data name="Play" xml:space="preserve">
     <value>Play</value>
