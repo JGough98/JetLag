@@ -34,7 +34,10 @@ h1:focus {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    background: radial-gradient(circle at top, #1f2937, #020617);
+    background-color: #245195 !important;
+    background-image: url('/Images/topography.svg') !important;
+    background-repeat: repeat !important;
+    background-size: auto !important;
 }
 
 .join-lobby-card {
