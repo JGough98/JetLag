@@ -1,26 +1,27 @@
 @page "/"
+@using JetLag.Resources
+@inject IStringLocalizer<ENGB> L
 
-<PageTitle>Join Lobby</PageTitle>
+
+<PageTitle>@L["JoinLobby"]</PageTitle>
 
 <div class="join-lobby-page">
     <div class="join-lobby-card">
-        <h1 class="join-lobby-title">Join Lobby</h1>
+        <h1 class="join-lobby-title">@L["JoinLobby"]</h1>
 
         <div class="join-lobby-form-group">
-            <label for="playerName">Name</label>
+            <label for="playerName">@L["Name"]</label>
             <input id="playerName" class="join-lobby-input" @bind="playerName" />
         </div>
 
         <div class="join-lobby-actions">
-            <button class="join-lobby-button join-lobby-button-primary"
-                    @onclick="OnPlayClicked"
-                    disabled="@string.IsNullOrWhiteSpace(playerName)">
-                Play
+            <button class="join-lobby-button join-lobby-button-primary" @onclick="OnPlayClicked"
+                disabled="@string.IsNullOrWhiteSpace(playerName)">
+                @L["Play"]
             </button>
-            <button class="join-lobby-button join-lobby-button-secondary"
-                    @onclick="OnCreatePrivateRoomClicked"
-                    disabled="@string.IsNullOrWhiteSpace(playerName)">
-                Create Private Room
+            <button class="join-lobby-button join-lobby-button-secondary" @onclick="OnCreatePrivateRoomClicked"
+                disabled="@string.IsNullOrWhiteSpace(playerName)">
+                @L["CreatePrivateRoom"]
             </button>
         </div>
     </div>
