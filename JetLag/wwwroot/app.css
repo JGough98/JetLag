@@ -118,6 +118,64 @@ body {
     gap: 0.75rem;
 }
 
+.lobby-select-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.lobby-select-section {
+    margin-bottom: 0.75rem;
+}
+
+.lobby-role-header {
+    width: 100%;
+    margin-bottom: 0.6rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid #4b5563;
+    background-color: transparent;
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lobby-role-header:hover {
+    background-color: rgba(15, 23, 42, 0.96);
+}
+
+.lobby-role-header-active {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    border-color: transparent;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5);
+}
+
+.lobby-role-input {
+    background-color: #020617;
+}
+
+.lobby-seekers-section {
+    padding: 0.9rem 0.9rem 1rem;
+    border-radius: 12px;
+    border: 1px dashed #4b5563;
+    background-color: rgba(15, 23, 42, 0.7);
+}
+
+.lobby-seekers-section .lobby-role-header {
+    margin-bottom: 0.75rem;
+}
+
+.lobby-seekers-section .join-lobby-input + .join-lobby-input {
+    margin-top: 0.5rem;
+}
+
+.lobby-select-actions {
+    margin-top: 0.25rem;
+}
+
 @media (min-width: 480px) {
     .join-lobby-actions {
         flex-direction: row;

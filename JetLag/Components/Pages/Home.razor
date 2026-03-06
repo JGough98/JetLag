@@ -3,6 +3,7 @@
 @using JetLag.Scripts.Utility
 
 @inject IStringLocalizer<TextConstants> L
+@inject NavigationManager NavigationManager
 
 
 <PageTitle>@L["AppName"] - @L["JoinLobby"]</PageTitle>
@@ -40,7 +41,8 @@
     /// <summary>
     private void OnPlayClicked()
     {
-        // TODO: Implement navigation to lobby / game
+        var target = $"/lobby?playerName={Uri.EscapeDataString(playerName)}&mode=public";
+        NavigationManager.NavigateTo(target);
     }
 
     /// <summary>
@@ -48,7 +50,8 @@
     /// <summary>
     private void OnCreatePrivateRoomClicked()
     {
-        // TODO: Implement create private room flow
+        var target = $"/lobby?playerName={Uri.EscapeDataString(playerName)}&mode=private";
+        NavigationManager.NavigateTo(target);
     }
 
     /// <summary>

@@ -1,0 +1,111 @@
+@page "/lobby"
+@using JetLag.Resources
+
+@inject IStringLocalizer<TextConstants> L
+
+<PageTitle>@L["AppName"] - @L["LobbySelect"]</PageTitle>
+
+<div class="join-lobby-page">
+    <div class="join-lobby-card lobby-select-card">
+        <h1 class="join-lobby-title">@L["LobbySelect"]</h1>
+
+        <div class="lobby-select-section">
+            <button class="lobby-role-header @(IsHiderSelected ? "lobby-role-header-active" : string.Empty)"
+                    @onclick="OnHiderClicked">
+                @L["Hider"]
+            </button>
+            <input class="join-lobby-input lobby-role-input"
+                   readonly
+                   value="@hiderName"
+                   placeholder='@L["Hider"]' />
+        </div>
+
+        <div class="lobby-select-section lobby-seekers-section">
+            <button class="lobby-role-header @(IsSeekerSelected ? "lobby-role-header-active" : string.Empty)"
+                    @onclick="OnSeekerClicked">
+                @L["Seekers"]
+            </button>
+
+            <input class="join-lobby-input lobby-role-input"
+                   readonly
+                   value="@firstSeekerName"
+                   placeholder='@L["Seekers"]' />
+
+            <input class="join-lobby-input lobby-role-input"
+                   readonly
+                   value="@secondSeekerName"
+                   placeholder='@L["Seekers"]' />
+        </div>
+
+        <div class="join-lobby-actions lobby-select-actions">
+            <button class="join-lobby-button join-lobby-button-primary"
+                    disabled="@string.IsNullOrWhiteSpace(activeRole)">
+                @L["Start"]
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "playerName")]
+    public string PlayerName { get; set; } = string.Empty;
+
+    private string hiderName = string.Empty;
+    private string firstSeekerName = string.Empty;
+    private string secondSeekerName = string.Empty;
+
+    private string? activeRole =>
+        IsHiderSelected ? "Hider" :
+        IsSeekerSelected ? "Seeker" :
+        null;
+
+    private bool IsHiderSelected => !string.IsNullOrWhiteSpace(PlayerName) && hiderName == PlayerName;
+    private bool IsSeekerSelected => !string.IsNullOrWhiteSpace(PlayerName) &&
+                                     (firstSeekerName == PlayerName || secondSeekerName == PlayerName);
+
+    private void OnHiderClicked()
+    {
+        if (string.IsNullOrWhiteSpace(PlayerName))
+        {
+            return;
+        }
+
+        // Remove from seekers if already there.
+        if (firstSeekerName == PlayerName)
+        {
+            firstSeekerName = string.Empty;
+        }
+
+        if (secondSeekerName == PlayerName)
+        {
+            secondSeekerName = string.Empty;
+        }
+
+        hiderName = PlayerName;
+    }
+
+    private void OnSeekerClicked()
+    {
+        if (string.IsNullOrWhiteSpace(PlayerName))
+        {
+            return;
+        }
+
+        // Remove from hider if already there.
+        if (hiderName == PlayerName)
+        {
+            hiderName = string.Empty;
+        }
+
+        // Prefer the first seeker slot, then the second.
+        if (firstSeekerName != PlayerName && string.IsNullOrWhiteSpace(firstSeekerName))
+        {
+            firstSeekerName = PlayerName;
+        }
+        else if (secondSeekerName != PlayerName && string.IsNullOrWhiteSpace(secondSeekerName))
+        {
+            secondSeekerName = PlayerName;
+        }
+    }
+}
+
