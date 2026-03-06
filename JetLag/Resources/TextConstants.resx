@@ -132,4 +132,16 @@
   <data name="Play" xml:space="preserve">
     <value>Play</value>
   </data>
+  <data name="LobbySelect" xml:space="preserve">
+    <value>Lobby Select</value>
+  </data>
+  <data name="Hider" xml:space="preserve">
+    <value>Hider</value>
+  </data>
+  <data name="Seekers" xml:space="preserve">
+    <value>Seekers</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
 </root>
