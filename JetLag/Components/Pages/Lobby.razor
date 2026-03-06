@@ -3,7 +3,7 @@
 
 @inject IStringLocalizer<TextConstants> L
 
-<PageTitle>@L["AppName"] - @L["LobbySelect"]</PageTitle>
+<AppTitle TitleKey="LobbySelect" Localizer="@L" />
 
 <div class="join-lobby-page">
     <div class="join-lobby-card lobby-select-card">
@@ -11,35 +11,28 @@
 
         <div class="lobby-select-section">
             <button class="lobby-role-header @(IsHiderSelected ? "lobby-role-header-active" : string.Empty)"
-                    @onclick="OnHiderClicked">
+                @onclick="OnHiderClicked">
                 @L["Hider"]
             </button>
-            <input class="join-lobby-input lobby-role-input"
-                   readonly
-                   value="@hiderName"
-                   placeholder='@L["Hider"]' />
+            <input class="join-lobby-input lobby-role-input" readonly value="@hiderName" placeholder='@L["Hider"]' />
         </div>
 
         <div class="lobby-select-section lobby-seekers-section">
             <button class="lobby-role-header @(IsSeekerSelected ? "lobby-role-header-active" : string.Empty)"
-                    @onclick="OnSeekerClicked">
+                @onclick="OnSeekerClicked">
                 @L["Seekers"]
             </button>
 
-            <input class="join-lobby-input lobby-role-input"
-                   readonly
-                   value="@firstSeekerName"
-                   placeholder='@L["Seekers"]' />
+            <input class="join-lobby-input lobby-role-input" readonly value="@firstSeekerName"
+                placeholder='@L["Seekers"]' />
 
-            <input class="join-lobby-input lobby-role-input"
-                   readonly
-                   value="@secondSeekerName"
-                   placeholder='@L["Seekers"]' />
+            <input class="join-lobby-input lobby-role-input" readonly value="@secondSeekerName"
+                placeholder='@L["Seekers"]' />
         </div>
 
         <div class="join-lobby-actions lobby-select-actions">
             <button class="join-lobby-button join-lobby-button-primary"
-                    disabled="@string.IsNullOrWhiteSpace(activeRole)">
+                disabled="@string.IsNullOrWhiteSpace(activeRole)">
                 @L["Start"]
             </button>
         </div>
@@ -55,13 +48,13 @@
     private string secondSeekerName = string.Empty;
 
     private string? activeRole =>
-        IsHiderSelected ? "Hider" :
-        IsSeekerSelected ? "Seeker" :
-        null;
+    IsHiderSelected ? "Hider" :
+    IsSeekerSelected ? "Seeker" :
+    null;
 
     private bool IsHiderSelected => !string.IsNullOrWhiteSpace(PlayerName) && hiderName == PlayerName;
     private bool IsSeekerSelected => !string.IsNullOrWhiteSpace(PlayerName) &&
-                                     (firstSeekerName == PlayerName || secondSeekerName == PlayerName);
+    (firstSeekerName == PlayerName || secondSeekerName == PlayerName);
 
     private void OnHiderClicked()
     {
@@ -108,4 +101,3 @@
         }
     }
 }
-

@@ -1,0 +1,11 @@
+@using JetLag.Resources
+
+<PageTitle>@Localizer["AppName"] - @Localizer[TitleKey]</PageTitle>
+
+@code {
+    [Parameter]
+    public string TitleKey { get; set; } = string.Empty;
+
+    [Parameter]
+    public IStringLocalizer<TextConstants> Localizer { get; set; } = default!;
+}
