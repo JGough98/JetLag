@@ -4,3 +4,5 @@ Its a game of hide and seek played acrosss entire countries. There are multiple 
 there are multiple rounds played, switching out the hider each time and whomever has the largest time before being caught is deemed the winner.
 
 This project represents the Client used to render the current location and visualisze the mechanics of the game.
+
+This is a Blazor application developed in C#.
