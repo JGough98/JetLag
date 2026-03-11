@@ -6,7 +6,7 @@
 
 @inject IStringLocalizer<TextConstants> L
 @inject NavigationManager NavigationManager
-@inject PlayerState PlayerState
+@inject ClientSettings ClientSettings
 
 
 <AppTitle TitleKey="JoinLobby" Localizer="@L" />
@@ -50,7 +50,7 @@
     /// </summary>
     private void OnCreatePrivateRoomClicked()
     {
-        PlayerState.PlayerName = playerName;
+        ClientSettings.PlayerName = playerName;
         NavigationManager.NavigateTo<Lobby>();
     }
 
