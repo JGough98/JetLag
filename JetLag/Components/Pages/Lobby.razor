@@ -17,7 +17,9 @@
                 @onclick="OnHiderClicked">
                 @L["Hider"]
             </button>
-            <input class="join-lobby-input lobby-role-input" readonly value="@hiderName" placeholder='@L["Hider"]' />
+            <div class="lobby-role-value">
+                @(!string.IsNullOrWhiteSpace(hiderName) ? hiderName : L["Hider"])
+            </div>
         </div>
 
         <div class="lobby-select-section lobby-seekers-section">

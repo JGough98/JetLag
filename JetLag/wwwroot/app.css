@@ -129,7 +129,6 @@ body {
 }
 
 .lobby-role-header {
-    width: 100%;
     margin-bottom: 0.6rem;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
@@ -155,6 +154,20 @@ body {
 
 .lobby-role-input {
     background-color: #020617;
+}
+
+.lobby-role-value {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid #4b5563;
+    background-color: #020617;
+    color: #e5e7eb;
+    font-size: 0.95rem;
+    cursor: default;
+    user-select: none;
+    box-sizing: border-box;
 }
 
 .lobby-seekers-section {
