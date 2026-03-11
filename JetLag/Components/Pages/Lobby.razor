@@ -3,7 +3,7 @@
 @using JetLag.Scripts
 
 @inject IStringLocalizer<TextConstants> L
-@inject PlayerState PlayerState
+@inject ClientSettings ClientSettings
 
 
 <AppTitle TitleKey="LobbySelect" Localizer="@L" />
@@ -18,7 +18,7 @@
                 @L["Hider"]
             </button>
             <div class="lobby-role-value">
-                @(!string.IsNullOrWhiteSpace(hiderName) ? hiderName : L["Hider"])
+                @_hider?.Name
             </div>
         </div>
 
@@ -28,82 +28,75 @@
                 @L["Seekers"]
             </button>
 
-            <div class="lobby-role-value">
-                @(!string.IsNullOrWhiteSpace(firstSeekerName) ? firstSeekerName : L["Seekers"])
-            </div>
-
-            <div class="lobby-role-value">
-                @(!string.IsNullOrWhiteSpace(secondSeekerName) ? secondSeekerName : L["Seekers"])
-            </div>
+            @foreach (var seaker in Seekers)
+            {
+                <div class="lobby-role-value">
+                    @seaker.Name
+                </div>
+            }
         </div>
 
         <div class="join-lobby-actions lobby-select-actions">
-            <button class="join-lobby-button join-lobby-button-primary"
-                disabled="@string.IsNullOrWhiteSpace(activeRole)">
+            <button class="join-lobby-button join-lobby-button-primary" disabled="@(!CanStart)">
                 @L["Start"]
             </button>
         </div>
     </div>
 </div>
 
+
 @code {
-    private string PlayerName => PlayerState.PlayerName;
+    private Player? _client;
+    private Player? _hider;
 
-    private string hiderName = string.Empty;
-    private string firstSeekerName = string.Empty;
-    private string secondSeekerName = string.Empty;
+    private List<Player> _players = new();
 
-    private string? activeRole =>
-    IsHiderSelected ? "Hider" :
-    IsSeekerSelected ? "Seeker" :
-    null;
 
-    private bool IsHiderSelected => !string.IsNullOrWhiteSpace(PlayerName) && hiderName == PlayerName;
-    private bool IsSeekerSelected => !string.IsNullOrWhiteSpace(PlayerName) &&
-    (firstSeekerName == PlayerName || secondSeekerName == PlayerName);
+    private string ClientName => _client!.Name;
+
+    private bool IsHiderSelected => _hider?.Name == ClientName;
+    private bool IsSeekerSelected => Seekers.Any(p => p.Name == ClientName);
+    private bool CanStart => _hider is not null && Seekers.Count > 0;
+
+    private List<Player> Seekers => _hider is null
+    ? _players
+    : _players.Where(p => p.ID != _hider.ID).ToList();
+
+
+    protected override void OnInitialized()
+    {
+        _client = ClientSettings.Player;
+        // TODO : Swap this out with server response.
+        _players = new()
+{
+_client,
+new("Boc", false),
+new("Allen", false),
+new("Charlie", false),
+};
+
+        _hider = _players.FirstOrDefault(p => p.IsHider);
+    }
+
 
     private void OnHiderClicked()
     {
-        if (string.IsNullOrWhiteSpace(PlayerName))
-        {
+        if (_hider is not null)
             return;
-        }
 
-        // Remove from seekers if already there.
-        if (firstSeekerName == PlayerName)
-        {
-            firstSeekerName = string.Empty;
-        }
-
-        if (secondSeekerName == PlayerName)
-        {
-            secondSeekerName = string.Empty;
-        }
-
-        hiderName = PlayerName;
+        SetClientAsHider(true);
+        StateHasChanged();
     }
 
     private void OnSeekerClicked()
     {
-        if (string.IsNullOrWhiteSpace(PlayerName))
-        {
-            return;
-        }
+        SetClientAsHider(false);
+        StateHasChanged();
+    }
 
-        // Remove from hider if already there.
-        if (hiderName == PlayerName)
-        {
-            hiderName = string.Empty;
-        }
-
-        // Prefer the first seeker slot, then the second.
-        if (firstSeekerName != PlayerName && string.IsNullOrWhiteSpace(firstSeekerName))
-        {
-            firstSeekerName = PlayerName;
-        }
-        else if (secondSeekerName != PlayerName && string.IsNullOrWhiteSpace(secondSeekerName))
-        {
-            secondSeekerName = PlayerName;
-        }
+    private void SetClientAsHider(bool state)
+    {
+        _hider = state ? _client : null;
+        _client!.IsHider = state;
     }
 }

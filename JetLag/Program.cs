@@ -14,7 +14,7 @@ builder.Services
     .AddLocalization();
 
 builder.Services
-    .AddSingleton<PlayerState>();
+    .AddSingleton<ClientSettings>();
 
 var app = builder.Build();
 
