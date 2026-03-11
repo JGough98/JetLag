@@ -1,5 +1,9 @@
 namespace JetLag.Scripts.Utility;
 
+
+/// <summary>
+/// Utility class for reading resources.
+/// </summary>
 public static class ReadUtility
 {
     /// <summary>
