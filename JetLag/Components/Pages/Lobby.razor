@@ -28,11 +28,13 @@
                 @L["Seekers"]
             </button>
 
-            <input class="join-lobby-input lobby-role-input" readonly value="@firstSeekerName"
-                placeholder='@L["Seekers"]' />
+            <div class="lobby-role-value">
+                @(!string.IsNullOrWhiteSpace(firstSeekerName) ? firstSeekerName : L["Seekers"])
+            </div>
 
-            <input class="join-lobby-input lobby-role-input" readonly value="@secondSeekerName"
-                placeholder='@L["Seekers"]' />
+            <div class="lobby-role-value">
+                @(!string.IsNullOrWhiteSpace(secondSeekerName) ? secondSeekerName : L["Seekers"])
+            </div>
         </div>
 
         <div class="join-lobby-actions lobby-select-actions">
