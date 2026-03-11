@@ -1,4 +1,5 @@
 using JetLag.Components;
+using JetLag.Scripts;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -11,6 +12,9 @@ builder.Services
 
 builder.Services
     .AddLocalization();
+
+builder.Services
+    .AddSingleton<PlayerState>();
 
 var app = builder.Build();
 

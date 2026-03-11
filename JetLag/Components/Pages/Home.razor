@@ -1,9 +1,12 @@
 @page "/"
 @using JetLag.Resources
+@using JetLag.Scripts
+@using JetLag.Scripts.Extensions
 @using JetLag.Scripts.Utility
 
 @inject IStringLocalizer<TextConstants> L
 @inject NavigationManager NavigationManager
+@inject PlayerState PlayerState
 
 
 <AppTitle TitleKey="JoinLobby" Localizer="@L" />
@@ -38,20 +41,17 @@
 
     /// <summary>
     /// Transitions to a public lobby.
-    /// <summary>
+    /// </summary>
     private void OnPlayClicked()
-    {
-        var target = $"/lobby?playerName={Uri.EscapeDataString(playerName)}&mode=public";
-        NavigationManager.NavigateTo(target);
-    }
+    => OnCreatePrivateRoomClicked();
 
     /// <summary>
     /// Transitions to a private lobby.
-    /// <summary>
+    /// </summary>
     private void OnCreatePrivateRoomClicked()
     {
-        var target = $"/lobby?playerName={Uri.EscapeDataString(playerName)}&mode=private";
-        NavigationManager.NavigateTo(target);
+        PlayerState.PlayerName = playerName;
+        NavigationManager.NavigateTo<Lobby>();
     }
 
     /// <summary>

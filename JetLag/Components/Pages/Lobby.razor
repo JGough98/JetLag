@@ -1,7 +1,10 @@
 @page "/lobby"
 @using JetLag.Resources
+@using JetLag.Scripts
 
 @inject IStringLocalizer<TextConstants> L
+@inject PlayerState PlayerState
+
 
 <AppTitle TitleKey="LobbySelect" Localizer="@L" />
 
@@ -40,8 +43,7 @@
 </div>
 
 @code {
-    [SupplyParameterFromQuery(Name = "playerName")]
-    public string PlayerName { get; set; } = string.Empty;
+    private string PlayerName => PlayerState.PlayerName;
 
     private string hiderName = string.Empty;
     private string firstSeekerName = string.Empty;
