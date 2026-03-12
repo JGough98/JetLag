@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/JetLag/bin/Debug/net8.0/JetLag.dll",
+            "program": "${workspaceFolder}/JetLag/bin/Debug/net9.0/JetLag.dll",
             "args": [],
             "cwd": "${workspaceFolder}/JetLag",
             "stopAtEntry": false,
