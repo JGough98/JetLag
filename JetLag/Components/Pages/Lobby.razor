@@ -1,9 +1,11 @@
 @page "/lobby"
 @using JetLag.Resources
 @using JetLag.Scripts
+@using JetLag.Scripts.Extensions
 
 @inject IStringLocalizer<TextConstants> L
 @inject ClientSettings ClientSettings
+@inject NavigationManager NavigationManager
 
 
 <AppTitle TitleKey="LobbySelect" Localizer="@L" />
@@ -37,7 +39,7 @@
         </div>
 
         <div class="join-lobby-actions lobby-select-actions">
-            <button class="join-lobby-button join-lobby-button-primary" disabled="@(!CanStart)">
+            <button class="join-lobby-button join-lobby-button-primary" @onclick="OnStartClicked" disabled=@(!CanStart)>
                 @L["Start"]
             </button>
         </div>
@@ -92,6 +94,11 @@ new("Charlie", false),
     {
         SetClientAsHider(false);
         StateHasChanged();
+    }
+
+    private void OnStartClicked()
+    {
+        NavigationManager.NavigateTo<Hider>();
     }
 
     private void SetClientAsHider(bool state)

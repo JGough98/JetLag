@@ -1,0 +1,55 @@
+@page "/hider"
+
+<div class="hider-map-container">
+    <RealTimeMap @ref="realTimeMap"
+                 height="100%"
+                 width="100%"
+                 Parameters="@parameters" />
+</div>
+
+<style>
+    .hider-map-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+    }
+</style>
+
+@code {
+    [SupplyParameterFromQuery(Name = "lat")]
+    public double Latitude { get; set; }
+
+    [SupplyParameterFromQuery(Name = "lng")]
+    public double Longitude { get; set; }
+
+    [SupplyParameterFromQuery(Name = "zoom")]
+    public int ZoomLevel { get; set; }
+
+    private RealTimeMap? realTimeMap;
+    private RealTimeMap.LoadParameters parameters = new();
+
+    protected override void OnInitialized()
+    {
+        if (Latitude == 0 && Longitude == 0)
+        {
+            Latitude = 51.505;
+            Longitude = -0.09;
+        }
+
+        if (ZoomLevel == 0)
+            ZoomLevel = 13;
+
+        parameters = new RealTimeMap.LoadParameters
+        {
+            location = new RealTimeMap.Location
+            {
+                latitude = Latitude,
+                longitude = Longitude,
+            },
+            zoomLevel = ZoomLevel
+        };
+    }
+}
