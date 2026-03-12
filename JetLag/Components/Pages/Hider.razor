@@ -1,10 +1,7 @@
 @page "/hider"
 
 <div class="hider-map-container">
-    <RealTimeMap @ref="realTimeMap"
-                 height="100%"
-                 width="100%"
-                 Parameters="@parameters" />
+    <RealTimeMap @ref="realTimeMap" height="100vh" width="100vw" Parameters="@parameters" />
 </div>
 
 <style>
@@ -15,6 +12,7 @@
         width: 100vw;
         height: 100vh;
         z-index: 1000;
+        overflow: hidden;
     }
 </style>
 
@@ -49,7 +47,20 @@
                 latitude = Latitude,
                 longitude = Longitude,
             },
-            zoomLevel = ZoomLevel
+            zoomLevel = ZoomLevel,
+            basemap = new RealTimeMap.Basemap
+            {
+                basemapLayers = new List<RealTimeMap.BasemapLayer>
+                {
+                    new RealTimeMap.BasemapLayer
+                    {
+                        url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        attribution = "&copy; OpenStreetMap",
+                        title = "OpenStreetMap",
+                        detectRetina = true
+                    }
+                }
+            }
         };
     }
 }
