@@ -74,5 +74,26 @@
     private async Task HandleMapLoaded(RealTimeMap.MapEventArgs args)
     {
         await MapRender.RenderCircle(args, Latitude, Longitude, 500);
+
+        var bounds = args.bounds;
+
+        var rightSidePolygon = new List<double[]>
+        {
+            new [] { bounds.southWest.latitude, Longitude },
+            new [] { bounds.northEast.latitude, Longitude },
+            new [] { bounds.northEast.latitude, bounds.northEast.longitude },
+            new [] { bounds.southWest.latitude, bounds.northEast.longitude }
+        };
+
+        await args.sender.Geometric.DisplayPolygonsFromArray.add(
+        rightSidePolygon,
+        new RealTimeMap.PolygonSymbol
+        {
+            color = "red",
+            fillColor = "red",
+            weight = 1,
+            opacity = 0.4,
+            fillOpacity = 0.2
+        });
     }
 }
