@@ -1,4 +1,4 @@
-namespace JetLag.Scripts.Draw;
+namespace JetLag.Scripts.Render;
 
 using JetLag.Scripts.Data;
 using JetLag.Scripts.Utility;
@@ -18,7 +18,11 @@ public class RenderCircle : IMapRender<RealTimeMap.MapEventArgs, CircleRenderDat
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task Render(RealTimeMap.MapEventArgs args, CircleRenderData data)
     {
-        var circlePoints = PolygonUtility.GenerateCirclePolygon(data.Latitude, data.Longitude, data.Radius, 64);
+        var circlePoints = PolygonUtility.GenerateCirclePolygon(
+            data.Latitude,
+            data.Longitude,
+            data.Radius,
+            points : 64);
         
         await args.sender.Geometric.DisplayPolygonsFromArray.add(
             circlePoints,

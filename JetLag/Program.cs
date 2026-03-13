@@ -1,7 +1,7 @@
 using JetLag.Components;
 using JetLag.Scripts;
 using JetLag.Scripts.Data;
-using JetLag.Scripts.Draw;
+using JetLag.Scripts.Render;
 using LeafletForBlazor;
 using Microsoft.Extensions.FileProviders;
 using System.IO;

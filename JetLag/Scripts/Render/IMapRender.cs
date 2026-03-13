@@ -1,3 +1,6 @@
+namespace JetLag.Scripts.Render;
+
+
 /// <summary>
 /// Interface to render on a map.
 /// </summary>

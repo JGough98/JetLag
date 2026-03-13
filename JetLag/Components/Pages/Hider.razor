@@ -1,5 +1,5 @@
 @page "/hider"
-@using JetLag.Scripts.Draw;
+@using JetLag.Scripts.Render;
 @using JetLag.Scripts.Data;
 @using LeafletForBlazor;
 
@@ -58,22 +58,22 @@
             basemap = new RealTimeMap.Basemap
             {
                 basemapLayers = new List<RealTimeMap.BasemapLayer>
-                {
-                    new RealTimeMap.BasemapLayer
-                    {
-                        url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        attribution = "&copy; OpenStreetMap",
-                        title = "OpenStreetMap",
-                        detectRetina = true
-                    }
-                }
+{
+new RealTimeMap.BasemapLayer
+{
+url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+attribution = "&copy; OpenStreetMap",
+title = "OpenStreetMap",
+detectRetina = true
+}
+}
             }
         };
     }
 
     private async Task HandleMapLoaded(RealTimeMap.MapEventArgs args)
     {
-        await CircleRender.Render(args, new CircleRenderData
+        var debugCircleData = new CircleRenderData
         {
             Latitude = Latitude,
             Longitude = Longitude,
@@ -83,6 +83,8 @@
             Weight = 2,
             Opacity = 0.8,
             FillOpacity = 0.2
-        });
+        };
+
+        await CircleRender.Render(args, debugCircleData);
     }
 }
