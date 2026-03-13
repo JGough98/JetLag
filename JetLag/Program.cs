@@ -1,5 +1,8 @@
 using JetLag.Components;
 using JetLag.Scripts;
+using JetLag.Scripts.Data;
+using JetLag.Scripts.Draw;
+using LeafletForBlazor;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -15,6 +18,8 @@ builder.Services
 
 builder.Services
     .AddSingleton<ClientSettings>();
+builder.Services
+    .AddScoped<IMapRender<RealTimeMap.MapEventArgs, CircleRenderData>, RenderCircle>();
 
 var app = builder.Build();
 

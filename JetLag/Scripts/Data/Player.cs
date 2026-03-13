@@ -1,3 +1,9 @@
+namespace JetLag.Scripts.Data;
+
+
+/// <summary>
+/// Represents a player in the game.
+/// </summary>
 public class Player
 {
     public string Name { get; }

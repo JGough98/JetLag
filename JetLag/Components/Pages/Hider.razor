@@ -1,4 +1,10 @@
 @page "/hider"
+@using JetLag.Scripts.Draw;
+@using JetLag.Scripts.Data;
+@using LeafletForBlazor;
+
+@inject IMapRender<RealTimeMap.MapEventArgs, CircleRenderData> CircleRender;
+
 
 <div class="hider-map-container">
     <RealTimeMap @ref="realTimeMap" height="100vh" width="100vw" Parameters="@parameters"
@@ -67,34 +73,16 @@
 
     private async Task HandleMapLoaded(RealTimeMap.MapEventArgs args)
     {
-        var circlePoints = GenerateCirclePolygon(Latitude, Longitude, 500, 64);
-        await args.sender.Geometric.DisplayPolygonsFromArray.add(
-        circlePoints,
-        new RealTimeMap.PolygonSymbol()
+        await CircleRender.Render(args, new CircleRenderData
         {
-            color = "blue",
-            fillColor = "blue",
-            weight = 2,
-            opacity = 0.8,
-            fillOpacity = 0.2
+            Latitude = Latitude,
+            Longitude = Longitude,
+            Radius = 500,
+            Color = "blue",
+            FillColor = "blue",
+            Weight = 2,
+            Opacity = 0.8,
+            FillOpacity = 0.2
         });
-    }
-
-    private static List<double[]> GenerateCirclePolygon(double centerLat, double centerLng, double radiusMeters, int points = 64)
-    {
-        const double earthRadius = 6371000;
-        var polygon = new List<double[]>();
-        for (int i = 0; i <= points; i++)
-        {
-            double angle = 2 * Math.PI * i / points;
-            double latOffset = radiusMeters / earthRadius * (180.0 / Math.PI);
-            double lngOffset = radiusMeters / earthRadius * (180.0 / Math.PI) / Math.Cos(centerLat * Math.PI / 180.0);
-            polygon.Add(new double[]
-            {
-                centerLat + latOffset * Math.Sin(angle),
-                centerLng + lngOffset * Math.Cos(angle)
-            });
-        }
-        return polygon;
     }
 }
