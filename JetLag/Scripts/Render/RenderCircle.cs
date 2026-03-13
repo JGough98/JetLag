@@ -8,7 +8,7 @@ using LeafletForBlazor;
 /// <summary>
 /// Renders a circle on the map.
 /// </summary>
-public class RenderCircle : IMapRender<RealTimeMap.MapEventArgs, CircleRenderData>
+public class CircleRender : IRender<RealTimeMap.MapEventArgs, CircleRenderData>
 {
     /// <summary>
     /// The intial render of the circle on the map.

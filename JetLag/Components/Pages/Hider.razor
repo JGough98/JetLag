@@ -3,7 +3,7 @@
 @using JetLag.Scripts.Data;
 @using LeafletForBlazor;
 
-@inject IMapRender<RealTimeMap.MapEventArgs, CircleRenderData> CircleRender;
+@inject IMapRender MapRender;
 
 
 <div class="hider-map-container">
@@ -58,33 +58,21 @@
             basemap = new RealTimeMap.Basemap
             {
                 basemapLayers = new List<RealTimeMap.BasemapLayer>
-{
-new RealTimeMap.BasemapLayer
-{
-url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-attribution = "&copy; OpenStreetMap",
-title = "OpenStreetMap",
-detectRetina = true
-}
-}
+                {
+                    new RealTimeMap.BasemapLayer
+                    {
+                        url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        attribution = "&copy; OpenStreetMap",
+                        title = "OpenStreetMap",
+                        detectRetina = true
+                    }
+                }
             }
         };
     }
 
     private async Task HandleMapLoaded(RealTimeMap.MapEventArgs args)
     {
-        var debugCircleData = new CircleRenderData
-        {
-            Latitude = Latitude,
-            Longitude = Longitude,
-            Radius = 500,
-            Color = "blue",
-            FillColor = "blue",
-            Weight = 2,
-            Opacity = 0.8,
-            FillOpacity = 0.2
-        };
-
-        await CircleRender.Render(args, debugCircleData);
+        await MapRender.RenderCircle(args, Latitude, Longitude, 500);
     }
 }

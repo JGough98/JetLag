@@ -1,33 +1,12 @@
 namespace JetLag.Scripts.Render;
 
+using LeafletForBlazor;
+
 
 /// <summary>
 /// Interface to render on a map.
 /// </summary>
-/// <typeparam name="T">The type of the map event arguments.</typeparam>
-/// <typeparam name="U">The type of the render data.</typeparam>
-public interface IMapRender<T, U>
+public interface IMapRender
 {
-    /// <summary>
-    /// Renders the data on the map.
-    /// </summary>
-    /// <param name="args">The map event arguments.</param>
-    /// <param name="renderData">The render data.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public Task Render(T args, U renderData);
-
-    /// <summary>
-    /// Updates the data on the map.
-    /// </summary>
-    /// <param name="args">The map event arguments.</param>
-    /// <param name="updateData">The update data.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public Task Update(T args, U updateData);
-
-    /// <summary>
-    /// Removes the data from the map.
-    /// </summary>
-    /// <param name="args">The map event arguments.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public Task Remove(T args);
+    public Task RenderCircle(RealTimeMap.MapEventArgs args, double Latitude, double Longitude, double Radius);
 }

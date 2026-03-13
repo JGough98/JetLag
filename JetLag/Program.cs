@@ -19,7 +19,8 @@ builder.Services
 builder.Services
     .AddSingleton<ClientSettings>();
 builder.Services
-    .AddScoped<IMapRender<RealTimeMap.MapEventArgs, CircleRenderData>, RenderCircle>();
+    .AddScoped<IRender<RealTimeMap.MapEventArgs, CircleRenderData>, CircleRender>()
+    .AddScoped<IMapRender, MapRender>();
 
 var app = builder.Build();
 
