@@ -8,7 +8,7 @@ public class MapRender : IMapRender
 {
     private readonly IRender<RealTimeMap.MapEventArgs, CircleRenderData> _circleRender;
 
-    private readonly CircleRenderData _circleData = new();
+    private readonly CircleRenderData _circleData;
 
 
     public MapRender(IRender<RealTimeMap.MapEventArgs, CircleRenderData> circleRender)
@@ -17,9 +17,6 @@ public class MapRender : IMapRender
 
         _circleData = new CircleRenderData()
         {
-            Latitude = 0,
-            Longitude = 0,
-            Radius = 500,
             Color = "blue",
             FillColor = "blue",
             Weight = 2,
