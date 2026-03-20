@@ -1,6 +1,6 @@
 namespace JetLag.Scripts.Render;
 
-using LeafletForBlazor;
+using Community.Blazor.MapLibre;
 
 
 /// <summary>
@@ -8,5 +8,5 @@ using LeafletForBlazor;
 /// </summary>
 public interface IMapRender
 {
-    public Task RenderCircle(RealTimeMap.MapEventArgs args, double Latitude, double Longitude, double Radius);
+    public Task RenderCircle(MapLibre map, double Latitude, double Longitude, double Radius);
 }

@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LeafletForBlazor" Version="2.2.2.2" />
+    <PackageReference Include="Community.Blazor.MapLibre" Version="1.3.0" />
   </ItemGroup>
 
 </Project>
