@@ -2,7 +2,7 @@ using JetLag.Components;
 using JetLag.Scripts;
 using JetLag.Scripts.Data;
 using JetLag.Scripts.Render;
-using LeafletForBlazor;
+using Community.Blazor.MapLibre;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -19,7 +19,7 @@ builder.Services
 builder.Services
     .AddSingleton<ClientSettings>();
 builder.Services
-    .AddScoped<IRender<RealTimeMap.MapEventArgs, CircleRenderData>, CircleRender>()
+    .AddScoped<IRender<Community.Blazor.MapLibre.MapLibre, CircleRenderData>, CircleRender>()
     .AddScoped<IMapRender, MapRender>();
 
 var app = builder.Build();

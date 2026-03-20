@@ -1,14 +1,15 @@
 @page "/hider"
-@using JetLag.Scripts.Render;
-@using JetLag.Scripts.Data;
-@using LeafletForBlazor;
+@using Community.Blazor.MapLibre.Models.Layers
+@using Community.Blazor.MapLibre.Models.Sources
+@using Community.Blazor.MapLibre.Models.Feature
+@using JetLag.Scripts.Render
+@using JetLag.Scripts.Data
 
-@inject IMapRender MapRender;
+@inject IMapRender MapRender
 
 
 <div class="hider-map-container">
-    <RealTimeMap @ref="realTimeMap" height="100vh" width="100vw" Parameters="@parameters"
-        OnAfterMapLoaded="HandleMapLoaded" />
+    <MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
 </div>
 
 <style>
@@ -33,8 +34,8 @@
     [SupplyParameterFromQuery(Name = "zoom")]
     public int ZoomLevel { get; set; }
 
-    private RealTimeMap? realTimeMap;
-    private RealTimeMap.LoadParameters parameters = new();
+    private MapLibre? _map;
+    private MapOptions _parameters = new();
 
     protected override void OnInitialized()
     {
@@ -47,53 +48,54 @@
         if (ZoomLevel == 0)
             ZoomLevel = 13;
 
-        parameters = new RealTimeMap.LoadParameters
+        _parameters = new MapOptions
         {
-            location = new RealTimeMap.Location
-            {
-                latitude = Latitude,
-                longitude = Longitude,
-            },
-            zoomLevel = ZoomLevel,
-            basemap = new RealTimeMap.Basemap
-            {
-                basemapLayers = new List<RealTimeMap.BasemapLayer>
-                {
-                    new RealTimeMap.BasemapLayer
-                    {
-                        url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        attribution = "&copy; OpenStreetMap",
-                        title = "OpenStreetMap",
-                        detectRetina = true
-                    }
-                }
-            }
+            Center = new LngLat(Longitude, Latitude),
+            Zoom = ZoomLevel,
+            Style = "https://tiles.openfreemap.org/styles/liberty"
         };
     }
 
-    private async Task HandleMapLoaded(RealTimeMap.MapEventArgs args)
+    private async Task HandleMapLoaded(EventArgs args)
     {
-        await MapRender.RenderCircle(args, Latitude, Longitude, 500);
+        await MapRender.RenderCircle(_map!, Latitude, Longitude, 500);
 
-        var bounds = args.bounds;
-
-        var rightSidePolygon = new List<double[]>
+        // Overlay covering everything east of the target longitude
+        var rightSideCoords = new double[][][]
         {
-            new [] { bounds.southWest.latitude, Longitude },
-            new [] { bounds.northEast.latitude, Longitude },
-            new [] { bounds.northEast.latitude, bounds.northEast.longitude },
-            new [] { bounds.southWest.latitude, bounds.northEast.longitude }
+            new double[][]
+            {
+                new double[] { Longitude, -90 },
+                new double[] { Longitude,  90 },
+                new double[] { 180,        90 },
+                new double[] { 180,       -90 },
+                new double[] { Longitude, -90 }
+            }
         };
 
-        await args.sender.Geometric.DisplayPolygonsFromArray.add(
-        rightSidePolygon,
-        new RealTimeMap.PolygonSymbol
+        await _map!.AddSource("right-side-source", new GeoJsonSource
         {
-            color = "red",
-            fillColor = "red",
-            weight = 1,
-            opacity = 0.4,
-            fillOpacity = 0.2
+            Data = new FeatureCollection
+            {
+                Features = new List<IFeature>
+                {
+                    new FeatureFeature
+                    {
+                        Geometry = new PolygonGeometry { Coordinates = rightSideCoords }
+                    }
+                }
+            }
+        });
+
+        await _map!.AddLayer(new FillLayer
+        {
+            Id = "right-side-layer",
+            Source = "right-side-source",
+            Paint = new FillLayerPaint
+            {
+                FillColor = "red",
+                FillOpacity = 0.2
+            }
         });
     }
 }

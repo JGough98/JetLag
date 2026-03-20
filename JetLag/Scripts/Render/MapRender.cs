@@ -1,17 +1,17 @@
 namespace JetLag.Scripts.Render;
 
 using JetLag.Scripts.Data;
-using LeafletForBlazor;
+using Community.Blazor.MapLibre;
 
 
 public class MapRender : IMapRender
 {
-    private readonly IRender<RealTimeMap.MapEventArgs, CircleRenderData> _circleRender;
+    private readonly IRender<MapLibre, CircleRenderData> _circleRender;
 
     private readonly CircleRenderData _circleData;
 
 
-    public MapRender(IRender<RealTimeMap.MapEventArgs, CircleRenderData> circleRender)
+    public MapRender(IRender<MapLibre, CircleRenderData> circleRender)
     {
         _circleRender = circleRender;
 
@@ -28,7 +28,7 @@ public class MapRender : IMapRender
 
 
     public async Task RenderCircle(
-        RealTimeMap.MapEventArgs args,
+        MapLibre map,
         double Latitude,
         double Longitude,
         double Radius)
@@ -37,6 +37,6 @@ public class MapRender : IMapRender
         _circleData.Longitude = Longitude;
         _circleData.Radius = Radius;
 
-        await _circleRender.Render(args, _circleData);
+        await _circleRender.Render(map, _circleData);
     }
 }

@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "JetLag (http)",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "JetLag/JetLag.csproj", "--launch-profile", "http"],
+      "port": 5026
+    },
+    {
+      "name": "JetLag (https)",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "JetLag/JetLag.csproj", "--launch-profile", "https"],
+      "port": 7056
+    }
+  ]
+}
