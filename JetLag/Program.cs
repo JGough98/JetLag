@@ -1,25 +1,22 @@
+using Microsoft.Extensions.FileProviders;
+
 using JetLag.Components;
 using JetLag.Scripts;
-using JetLag.Scripts.Data;
 using JetLag.Scripts.Render;
-using Community.Blazor.MapLibre;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
+using JetLag.Scripts.Extensions;
+using JetLag.Scripts.Factory;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services
-    .AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddLocalization();
 
 builder.Services
-    .AddLocalization();
-
-builder.Services
-    .AddSingleton<ClientSettings>();
-builder.Services
-    .AddScoped<IRender<Community.Blazor.MapLibre.MapLibre, CircleRenderData>, CircleRender>()
+    .AddSingleton<ClientSettings>()
+    .RegisterFactory<IMapLayerRender, MapLayerRenderFactory>()
     .AddScoped<IMapRender, MapRender>();
 
 var app = builder.Build();
@@ -35,18 +32,27 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Images")),
-    RequestPath = "/Images"
-}).UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Fonts")),
-    RequestPath = "/Fonts"
-});;
+app.UseStaticFiles(
+        new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(app.Environment.ContentRootPath, "Images")
+            ),
+            RequestPath = "/Images"
+        }
+    )
+    .UseStaticFiles(
+        new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(app.Environment.ContentRootPath, "Fonts")
+            ),
+            RequestPath = "/Fonts"
+        }
+    );
+;
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 app.Run();

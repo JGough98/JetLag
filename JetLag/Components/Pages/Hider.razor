@@ -1,11 +1,8 @@
 @page "/hider"
-@using Community.Blazor.MapLibre.Models.Layers
-@using Community.Blazor.MapLibre.Models.Sources
-@using Community.Blazor.MapLibre.Models.Feature
-@using JetLag.Scripts.Render
-@using JetLag.Scripts.Data
 
-@inject IMapRender MapRender
+@using JetLag.Scripts.Render
+
+@inject IMapRender mapRender
 
 
 <div class="hider-map-container">
@@ -58,44 +55,10 @@
 
     private async Task HandleMapLoaded(EventArgs args)
     {
-        await MapRender.RenderCircle(_map!, Latitude, Longitude, 500);
+        await mapRender.RenderInvertCircle(_map!, Latitude, Longitude, 6000);
 
-        // Overlay covering everything east of the target longitude
-        var rightSideCoords = new double[][][]
-        {
-            new double[][]
-            {
-                new double[] { Longitude, -90 },
-                new double[] { Longitude,  90 },
-                new double[] { 180,        90 },
-                new double[] { 180,       -90 },
-                new double[] { Longitude, -90 }
-            }
-        };
+        @* await mapRender.RenderCircle(_map!, Latitude, Longitude, 60000);
 
-        await _map!.AddSource("right-side-source", new GeoJsonSource
-        {
-            Data = new FeatureCollection
-            {
-                Features = new List<IFeature>
-                {
-                    new FeatureFeature
-                    {
-                        Geometry = new PolygonGeometry { Coordinates = rightSideCoords }
-                    }
-                }
-            }
-        });
-
-        await _map!.AddLayer(new FillLayer
-        {
-            Id = "right-side-layer",
-            Source = "right-side-source",
-            Paint = new FillLayerPaint
-            {
-                FillColor = "red",
-                FillOpacity = 0.2
-            }
-        });
+        await mapRender.RenderStraightLine(_map!, Latitude, Longitude, 90); *@
     }
 }

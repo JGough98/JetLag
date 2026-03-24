@@ -1,42 +1,49 @@
 namespace JetLag.Scripts.Render;
 
-using JetLag.Scripts.Data;
 using Community.Blazor.MapLibre;
+using JetLag.Scripts.Utility;
 
 
 public class MapRender : IMapRender
 {
-    private readonly IRender<MapLibre, CircleRenderData> _circleRender;
-
-    private readonly CircleRenderData _circleData;
+    private IMapLayerRender _mapLayerRender;
 
 
-    public MapRender(IRender<MapLibre, CircleRenderData> circleRender)
+    public MapRender(IMapLayerRender mapLayerRender)
     {
-        _circleRender = circleRender;
-
-        _circleData = new CircleRenderData()
-        {
-            Color = "blue",
-            FillColor = "blue",
-            Weight = 2,
-            Opacity = 0.8,
-            FillOpacity = 0.2
-        };
+        _mapLayerRender = mapLayerRender;
     }
 
 
+    public async Task RenderCircle(MapLibre map, double latitude, double longitude, double radius)
+        => await _mapLayerRender.Add(CirclePolygon(latitude, longitude, radius), map);
 
-    public async Task RenderCircle(
-        MapLibre map,
-        double Latitude,
-        double Longitude,
-        double Radius)
+    public async Task RenderInvertCircle(MapLibre map, double latitude, double longitude, double radius)
+        => await _mapLayerRender.AddInverted(CirclePolygon(latitude, longitude, radius), map);
+
+    public async Task RenderStraightLine(MapLibre map, double latitude, double longitude, double angle)
+        => await _mapLayerRender.Add(RectanclePolygon(latitude, longitude, angle), map);
+
+
+    // TODO - Maybe should consider a function that increases the number of "points" the larger the radius is?
+    private double[][] CirclePolygon(double latitude, double longitude, double radius)
+        => PolygonUtility
+            .GenerateCirclePolygon(latitude, longitude, radius, points: 64)
+            .Select(p => new double[] { p[1], p[0] })
+            .ToArray();
+
+    // TODO - Alter the rectangle drawn to account for angle.
+    private double[][] RectanclePolygon(double latitude, double longitude, double angle)
     {
-        _circleData.Latitude = Latitude;
-        _circleData.Longitude = Longitude;
-        _circleData.Radius = Radius;
+        var rightSideCoords = new double[][]
+        {
+            [longitude, -90],
+            [longitude,  90],
+            [180,        90],
+            [180,       -90],
+            [longitude, -90]
+        };
 
-        await _circleRender.Render(map, _circleData);
+        return rightSideCoords;
     }
 }
