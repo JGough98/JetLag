@@ -14,14 +14,14 @@ public class MapLayerRenderFactory : IFactory<IMapLayerRender>
             $"layer-id-{sessionID}",
             opacity: 0.2f,
             color: "#FF0000",
-            worldBounds: new double[][]
-            {
-                new double[] { -180, -90 },
-                new double[] { 180, -90 },
-                new double[] { 180, 90 },
-                new double[] { -180, 90 },
-                new double[] { -180, -90 }
-            }
+            worldBounds:
+            [
+                [-180, -90],
+                [180, -90],
+                [180, 90],
+                [-180, 90],
+                [-180, -90]
+            ]
         );
     }
 }
