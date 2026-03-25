@@ -100,7 +100,7 @@ public class MapLayerRender : IMapLayerRender
                 {
                     new FeatureFeature
                     {
-                        Geometry = new PolygonGeometry
+                        Geometry = new MultiPolygonGeometry
                         {
                             Coordinates = _geomitryCombinder.GetGeometryCoordinates()
                         }
