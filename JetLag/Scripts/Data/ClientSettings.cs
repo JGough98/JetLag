@@ -1,6 +1,4 @@
-using JetLag.Scripts.Data;
-
-namespace JetLag.Scripts;
+namespace JetLag.Scripts.Data;
 
 
 /// <summary>

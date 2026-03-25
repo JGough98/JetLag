@@ -56,9 +56,7 @@
     private async Task HandleMapLoaded(EventArgs args)
     {
         await mapRender.RenderInvertCircle(_map!, Latitude, Longitude, 6000);
-
-        @* await mapRender.RenderCircle(_map!, Latitude, Longitude, 60000);
-
-        await mapRender.RenderStraightLine(_map!, Latitude, Longitude, 90); *@
+        await mapRender.RenderCircle(_map!, Latitude, Longitude, 600);
+        await mapRender.RenderStraightLine(_map!, Latitude, Longitude, 90);
     }
 }

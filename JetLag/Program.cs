@@ -1,10 +1,11 @@
 using Microsoft.Extensions.FileProviders;
 
 using JetLag.Components;
-using JetLag.Scripts;
-using JetLag.Scripts.Render;
+using JetLag.Scripts.Data;
 using JetLag.Scripts.Extensions;
 using JetLag.Scripts.Factory;
+using JetLag.Scripts.Geomitry;
+using JetLag.Scripts.Render;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddLocalization();
 
 builder.Services
     .AddSingleton<ClientSettings>()
+    .AddScoped<IGeomitryCombinder, GeomitryCombinder>()
     .RegisterFactory<IMapLayerRender, MapLayerRenderFactory>()
     .AddScoped<IMapRender, MapRender>();
 

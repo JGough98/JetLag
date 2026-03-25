@@ -4,11 +4,12 @@ using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Sources;
 using Community.Blazor.MapLibre.Models.Layers;
 using Community.Blazor.MapLibre.Models.Feature;
+using JetLag.Scripts.Geomitry;
 
 
 public class MapLayerRender : IMapLayerRender
 {
-    private List<IFeature> _mapFeatures = new List<IFeature>();
+    private IGeomitryCombinder _geomitryCombinder;
 
     private readonly string _sourceId;
     private readonly string _layerId;
@@ -18,7 +19,11 @@ public class MapLayerRender : IMapLayerRender
 
     private readonly double[][] _worldBounds;
 
+    private bool _inUse;
+
+
     public MapLayerRender(
+        IGeomitryCombinder geomitryCombinder,
         string sourceId,
         string layerId,
         string color,
@@ -26,58 +31,50 @@ public class MapLayerRender : IMapLayerRender
         double[][] worldBounds
     )
     {
+        _geomitryCombinder = geomitryCombinder;
         _sourceId = sourceId;
         _layerId = layerId;
         _color = color;
         _opacity = opacity;
         _worldBounds = worldBounds;
+        _inUse = false;
+    }
+
+
+    public async Task Add(double[][] newCoordinates, MapLibre map)
+    {
+        _geomitryCombinder.Add(newCoordinates);
+        await AddFeature(map);
+    }
+
+    public async Task AddInverted(double[][] newCoordinates, MapLibre map)
+    {
+        _geomitryCombinder.AddInverted(newCoordinates, _worldBounds);
+        await AddFeature(map);
     }
 
     public async Task Clear(MapLibre map)
     {
+        _inUse = false;
+
         await map.RemoveLayer(_layerId);
         await map.RemoveSource(_sourceId);
-
-        _mapFeatures = new List<IFeature>();
     }
 
-    public async Task Add(double[][] newCoordinates, MapLibre map) =>
-        await AddFeature(
-            new FeatureFeature
-            {
-                Geometry = new PolygonGeometry { Coordinates = new double[][][] { newCoordinates } }
-            },
-            map
-        );
 
-    public async Task AddInverted(double[][] newCoordinates, MapLibre map) =>
-        await AddFeature(
-            new FeatureFeature
-            {
-                Geometry = new PolygonGeometry
-                {
-                    Coordinates = new double[][][] { _worldBounds, newCoordinates }
-                }
-            },
-            map
-        );
-
-    private async Task AddFeature(FeatureFeature newFeature, MapLibre map)
+    private async Task AddFeature(MapLibre map)
     {
-        _mapFeatures.Add(newFeature);
-
-        if (_mapFeatures.Count == 1)
-            await InitializeMapLayer(map);
+        if (_inUse)
+            await RefreshMapData(GetGeoJsonSource(), map);
         else
-            await RefreshMapData(map);
+            await InitializeMapLayer(GetGeoJsonSource(), map);
+
+        _inUse = true;
     }
 
-    private async Task InitializeMapLayer(MapLibre map)
+    private async Task InitializeMapLayer(GeoJsonSource newFeature, MapLibre map)
     {
-        await map.AddSource(
-            _sourceId,
-            new GeoJsonSource { Data = new FeatureCollection { Features = _mapFeatures } }
-        );
+        await map.AddSource(_sourceId, newFeature);
 
         await map.AddLayer(
             new FillLayer
@@ -89,11 +86,26 @@ public class MapLayerRender : IMapLayerRender
         );
     }
 
-    private async Task RefreshMapData(MapLibre map)
+    private async Task RefreshMapData(GeoJsonSource newFeature, MapLibre map)
     {
-        await map.SetSourceData(
-            _sourceId,
-            new GeoJsonSource { Data = new FeatureCollection { Features = _mapFeatures } }
-        );
+        await map.SetSourceData(_sourceId, newFeature);
     }
+
+    private GeoJsonSource GetGeoJsonSource() =>
+        new GeoJsonSource
+        {
+            Data = new FeatureCollection
+            {
+                Features = new List<IFeature>()
+                {
+                    new FeatureFeature
+                    {
+                        Geometry = new PolygonGeometry
+                        {
+                            Coordinates = _geomitryCombinder.GetGeometryCoordinates()
+                        }
+                    }
+                }
+            }
+        };
 }
