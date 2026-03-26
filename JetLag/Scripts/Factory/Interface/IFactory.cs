@@ -1,4 +1,4 @@
-namespace JetLag.Scripts.Factory
+namespace JetLag.Scripts.Factory.Interface
 {
     public interface IFactory<T>
     {

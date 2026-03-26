@@ -17,7 +17,7 @@ builder.Services.AddLocalization();
 
 builder.Services
     .AddSingleton<ClientSettings>()
-    .AddScoped<IGeomitryCombinder, GeomitryCombinder>()
+    .RegisterFactory<IGeomitryCombinder, GeomitryCombinderFactory>()
     .RegisterFactory<IMapLayerRender, MapLayerRenderFactory>()
     .AddScoped<IMapRender, MapRender>();
 

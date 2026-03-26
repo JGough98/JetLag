@@ -9,7 +9,10 @@ using JetLag.Scripts.Geomitry;
 
 public class MapLayerRender : IMapLayerRender
 {
-    private IGeomitryCombinder _geomitryCombinder;
+    private readonly IGeomitryCombinder _geomitryCombinder;
+
+    private readonly Action<double[][]> _addCoordinatesDelagate;
+    private readonly Action<double[][]> _addInvertedCoordinatesDelagate;
 
     private readonly string _sourceId;
     private readonly string _layerId;
@@ -17,59 +20,53 @@ public class MapLayerRender : IMapLayerRender
 
     private readonly double _opacity;
 
-    private readonly double[][] _worldBounds;
-
-    private bool _inUse;
-
 
     public MapLayerRender(
         IGeomitryCombinder geomitryCombinder,
         string sourceId,
         string layerId,
         string color,
-        double opacity,
-        double[][] worldBounds
+        double opacity
     )
     {
         _geomitryCombinder = geomitryCombinder;
+        _addCoordinatesDelagate = x => _geomitryCombinder.Add(x);
+        _addInvertedCoordinatesDelagate = x => _geomitryCombinder.AddInverted(x);
         _sourceId = sourceId;
         _layerId = layerId;
         _color = color;
         _opacity = opacity;
-        _worldBounds = worldBounds;
-        _inUse = false;
     }
 
 
-    public async Task Add(double[][] newCoordinates, MapLibre map)
-    {
-        _geomitryCombinder.Add(newCoordinates);
-        await AddFeature(map);
-    }
+    public async Task Add(double[][] newCoordinates, MapLibre map) =>
+        await AddFeature(newCoordinates, map, _addCoordinatesDelagate);
 
-    public async Task AddInverted(double[][] newCoordinates, MapLibre map)
-    {
-        _geomitryCombinder.AddInverted(newCoordinates, _worldBounds);
-        await AddFeature(map);
-    }
+    public async Task AddInverted(double[][] newCoordinates, MapLibre map) =>
+        await AddFeature(newCoordinates, map, _addInvertedCoordinatesDelagate);
 
     public async Task Clear(MapLibre map)
     {
-        _inUse = false;
-
         await map.RemoveLayer(_layerId);
         await map.RemoveSource(_sourceId);
+        _geomitryCombinder.Reset();
     }
 
 
-    private async Task AddFeature(MapLibre map)
+    private async Task AddFeature(
+        double[][] newCoordinates,
+        MapLibre map,
+        Action<double[][]> addDelgate
+    )
     {
-        if (_inUse)
+        var inUse = _geomitryCombinder.InUse;
+
+        addDelgate(newCoordinates);
+
+        if (inUse)
             await RefreshMapData(GetGeoJsonSource(), map);
         else
             await InitializeMapLayer(GetGeoJsonSource(), map);
-
-        _inUse = true;
     }
 
     private async Task InitializeMapLayer(GeoJsonSource newFeature, MapLibre map)

@@ -1,4 +1,4 @@
-using JetLag.Scripts.Factory;
+using JetLag.Scripts.Factory.Interface;
 
 
 namespace JetLag.Scripts.Extensions

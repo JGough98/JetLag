@@ -1,3 +1,4 @@
+using JetLag.Scripts.Factory.Interface;
 using JetLag.Scripts.Geomitry;
 using JetLag.Scripts.Render;
 
@@ -24,15 +25,7 @@ public class MapLayerRenderFactory : IFactory<IMapLayerRender>
             sourceId : $"source-id-{sessionID}",
             layerId : $"layer-id-{sessionID}",
             color: "#FF0000",
-            opacity: 0.2f,
-            worldBounds:
-            [
-                [-180, -90],
-                [180, -90],
-                [180, 90],
-                [-180, 90],
-                [-180, -90]
-            ]
+            opacity: 0.2f
         );
     }
 }
