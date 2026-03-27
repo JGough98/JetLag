@@ -6,57 +6,59 @@
 
 
 <div class="hider-map-container">
-    <MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
+	<MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
 </div>
 
 <style>
-    .hider-map-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 1000;
-        overflow: hidden;
-    }
+	.hider-map-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: 1000;
+		overflow: hidden;
+	}
 </style>
 
 @code {
-    [SupplyParameterFromQuery(Name = "lat")]
-    public double Latitude { get; set; }
+	[SupplyParameterFromQuery(Name = "lat")]
+	public double Latitude { get; set; }
 
-    [SupplyParameterFromQuery(Name = "lng")]
-    public double Longitude { get; set; }
+	[SupplyParameterFromQuery(Name = "lng")]
+	public double Longitude { get; set; }
 
-    [SupplyParameterFromQuery(Name = "zoom")]
-    public int ZoomLevel { get; set; }
+	[SupplyParameterFromQuery(Name = "zoom")]
+	public int ZoomLevel { get; set; }
 
-    private MapLibre? _map;
-    private MapOptions _parameters = new();
+	private MapLibre? _map;
+	private MapOptions _parameters = new();
 
-    protected override void OnInitialized()
-    {
-        if (Latitude == 0 && Longitude == 0)
-        {
-            Latitude = 51.505;
-            Longitude = -0.09;
-        }
+	protected override void OnInitialized()
+	{
+		if (Latitude == 0 && Longitude == 0)
+		{
+			Latitude = 51.505;
+			Longitude = -0.09;
+		}
 
-        if (ZoomLevel == 0)
-            ZoomLevel = 13;
+		if (ZoomLevel == 0)
+			ZoomLevel = 13;
 
-        _parameters = new MapOptions
-        {
-            Center = new LngLat(Longitude, Latitude),
-            Zoom = ZoomLevel,
-            Style = "https://tiles.openfreemap.org/styles/liberty"
-        };
-    }
+		_parameters = new MapOptions
+		{
+			Center = new LngLat(Longitude, Latitude),
+			Zoom = ZoomLevel,
+			Style = "https://tiles.openfreemap.org/styles/liberty",
+			MinZoom = 2
+		};
+	}
 
-    private async Task HandleMapLoaded(EventArgs args)
-    {
-        await mapRender.RenderInvertCircle(_map!, Latitude+0.02, Longitude+0.02, 6000);
-        await mapRender.RenderInvertCircle(_map!, Latitude, Longitude, 6000);
-        await mapRender.RenderCircle(_map!, Latitude, Longitude, 600);
-    }
+	private async Task HandleMapLoaded(EventArgs args)
+	{
+		// await mapRender.RenderInvertCircle(_map!, Latitude+0.02, Longitude+0.02, 6000);
+		// await mapRender.RenderInvertCircle(_map!, Latitude, Longitude, 6000);
+		// await mapRender.RenderCircle(_map!, Latitude, Longitude, 600);
+		await mapRender.RenderStraightLine(_map!, Latitude, Longitude, 5);
+	}
 }
