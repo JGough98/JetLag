@@ -1,25 +1,24 @@
 @using JetLag.Scripts.Models
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
-<div class="questions-menu">
-    <button class="questions-menu-titlebar" @onclick="ToggleExpanded">
+<div class="questions-menu" @ref="_menuRef">
+    <button class="questions-menu-titlebar">
         <span class="questions-menu-titlebar-label">QUESTION MENU</span>
-        <span class="questions-menu-titlebar-chevron">@(_isExpanded ? "▼" : "▲")</span>
+        <span class="questions-menu-titlebar-chevron">▼</span>
     </button>
 
-    @if (_isExpanded)
-    {
-        <div class="questions-menu-cards">
-            @foreach (var card in Cards)
-            {
-                <QuestionCard
-                    Title="@card.Title"
-                    SubTitle="@card.SubTitle"
-                    Color="@card.Color"
-                    MainImage="@card.MainImage"
-                    Buttons="@card.Buttons" />
-            }
-        </div>
-    }
+    <div class="questions-menu-cards">
+        @foreach (var card in Cards)
+        {
+            <QuestionCard
+                Title="@card.Title"
+                SubTitle="@card.SubTitle"
+                Color="@card.Color"
+                MainImage="@card.MainImage"
+                Buttons="@card.Buttons" />
+        }
+    </div>
 </div>
 
 <style>
@@ -43,9 +42,11 @@
         padding: 0.55rem 1rem;
         background-color: #991b1b;
         border: none;
-        cursor: pointer;
+        cursor: ns-resize;
         transition: background-color 0.12s ease;
         box-sizing: border-box;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .questions-menu-titlebar:hover {
@@ -85,18 +86,34 @@
         background-color: #334155;
         border-radius: 2px;
     }
+
+    .questions-menu--animating .question-card-btn {
+        pointer-events: none;
+        cursor: default;
+    }
 </style>
 
 @code {
     [Parameter, EditorRequired]
     public QuestionCardModel[] Cards { get; set; } = Array.Empty<QuestionCardModel>();
 
+    private ElementReference _menuRef;
+    private IJSObjectReference? _jsModule;
 
-    private bool _isExpanded = true;
 
-
-    private void ToggleExpanded()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _isExpanded = !_isExpanded;
+        if (firstRender)
+        {
+            _jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/questionsMenu.js");
+            await _jsModule.InvokeVoidAsync("init", _menuRef);
+        }
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_jsModule is not null)
+            await _jsModule.DisposeAsync();
     }
 }
