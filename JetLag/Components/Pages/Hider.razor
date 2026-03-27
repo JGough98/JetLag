@@ -1,6 +1,7 @@
 @page "/hider"
 
 @using JetLag.Scripts.Render
+@using JetLag.Scripts.Models
 
 @inject IMapRender mapRender
 
@@ -8,6 +9,8 @@
 <div class="hider-map-container">
 	<MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
 </div>
+
+<QuestionsMenu Cards="_cards" />
 
 <style>
 	.hider-map-container {
@@ -33,6 +36,108 @@
 
 	private MapLibre? _map;
 	private MapOptions _parameters = new();
+
+	private readonly QuestionCardModel[] _cards =
+	[
+		new QuestionCardModel
+		{
+			Title = "MATCHING",
+			SubTitle = "DRAW 3, PICK 1",
+			Color = "#22c55e",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+		new QuestionCardModel
+		{
+			Title = "MEASURING",
+			SubTitle = "DRAW 3, PICK 1",
+			Color = "#38bdf8",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+		new QuestionCardModel
+		{
+			Title = "THERMOMETER",
+			SubTitle = "DRAW 2, PICK 1",
+			Color = "#f59e0b",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+		new QuestionCardModel
+		{
+			Title = "RADAR",
+			SubTitle = "DRAW 2, PICK 1",
+			Color = "#f97316",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+		new QuestionCardModel
+		{
+			Title = "TENTACLES",
+			SubTitle = "DRAW 4, PICK 2",
+			Color = "#a855f7",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+		new QuestionCardModel
+		{
+			Title = "PHOTOS",
+			SubTitle = "DRAW 1",
+			Color = "#0ea5e9",
+			MainImage = "",
+			Buttons =
+			[
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+				new QuestionButtonModel { Command = () => Task.CompletedTask },
+			]
+		},
+	];
 
 	protected override void OnInitialized()
 	{

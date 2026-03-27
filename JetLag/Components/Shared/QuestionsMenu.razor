@@ -1,0 +1,120 @@
+@using JetLag.Scripts.Models
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<div class="questions-menu" @ref="_menuRef">
+    <button class="questions-menu-titlebar">
+        <span class="questions-menu-titlebar-chevron">▼</span>
+        <span class="questions-menu-titlebar-label">QUESTION MENU</span>
+    </button>
+
+    <div class="questions-menu-cards">
+        @foreach (var card in Cards)
+        {
+            <QuestionCard
+                Title="@card.Title"
+                SubTitle="@card.SubTitle"
+                Color="@card.Color"
+                MainImage="@card.MainImage"
+                Buttons="@card.Buttons" />
+        }
+    </div>
+</div>
+
+<style>
+    .questions-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1100;
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(10, 16, 30, 0.88);
+        border-top: 2px solid #7f1d1d;
+    }
+
+    .questions-menu-titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.55rem 1rem;
+        background-color: #991b1b;
+        border: none;
+        cursor: ns-resize;
+        transition: background-color 0.12s ease;
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .questions-menu-titlebar:hover {
+        background-color: #b91c1c;
+    }
+
+    .questions-menu-titlebar-label {
+        font-family: 'Coolvetica', system-ui, sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .questions-menu-titlebar-chevron {
+        color: #fca5a5;
+        font-size: 0.8rem;
+    }
+
+    .questions-menu-cards {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: #334155 transparent;
+    }
+
+    .questions-menu-cards::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .questions-menu-cards::-webkit-scrollbar-thumb {
+        background-color: #334155;
+        border-radius: 2px;
+    }
+
+    .questions-menu--animating .question-card-btn {
+        pointer-events: none;
+        cursor: default;
+    }
+</style>
+
+@code {
+    [Parameter, EditorRequired]
+    public QuestionCardModel[] Cards { get; set; } = Array.Empty<QuestionCardModel>();
+
+    private ElementReference _menuRef;
+    private IJSObjectReference? _jsModule;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/questionsMenu.js");
+            await _jsModule.InvokeVoidAsync("init", _menuRef);
+        }
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_jsModule is not null)
+            await _jsModule.DisposeAsync();
+    }
+}
