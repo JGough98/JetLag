@@ -1,16 +1,18 @@
 @page "/hider"
 
-@using JetLag.Scripts.Render
+@using JetLag.Scripts.Factory.Interface
 @using JetLag.Scripts.Models
+@using JetLag.Scripts.Render
 
-@inject IMapRender mapRender
+@inject IFactory<IReadOnlyList<QuestionCardModel>, IHandleEvent> cardFactory
+@inject MapRender mapRender
 
 
 <div class="hider-map-container">
 	<MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
 </div>
 
-<QuestionsMenu Cards="_cards" />
+<QuestionsMenu Cards="_cards.ToArray()" />
 
 <style>
 	.hider-map-container {
@@ -37,110 +39,13 @@
 	private MapLibre? _map;
 	private MapOptions _parameters = new();
 
-	private readonly QuestionCardModel[] _cards =
-	[
-		new QuestionCardModel
-		{
-			Title = "MATCHING",
-			SubTitle = "DRAW 3, PICK 1",
-			Color = "#22c55e",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-		new QuestionCardModel
-		{
-			Title = "MEASURING",
-			SubTitle = "DRAW 3, PICK 1",
-			Color = "#38bdf8",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-		new QuestionCardModel
-		{
-			Title = "THERMOMETER",
-			SubTitle = "DRAW 2, PICK 1",
-			Color = "#f59e0b",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-		new QuestionCardModel
-		{
-			Title = "RADAR",
-			SubTitle = "DRAW 2, PICK 1",
-			Color = "#f97316",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-		new QuestionCardModel
-		{
-			Title = "TENTACLES",
-			SubTitle = "DRAW 4, PICK 2",
-			Color = "#a855f7",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-		new QuestionCardModel
-		{
-			Title = "PHOTOS",
-			SubTitle = "DRAW 1",
-			Color = "#0ea5e9",
-			MainImage = "",
-			Buttons =
-			[
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-				new QuestionButtonModel { Command = () => Task.CompletedTask },
-			]
-		},
-	];
+	private IReadOnlyList<QuestionCardModel> _cards;
+
 
 	protected override void OnInitialized()
 	{
+		_cards = cardFactory.Create(this);
+
 		if (Latitude == 0 && Longitude == 0)
 		{
 			Latitude = 51.505;
@@ -161,9 +66,7 @@
 
 	private async Task HandleMapLoaded(EventArgs args)
 	{
-		// await mapRender.RenderInvertCircle(_map!, Latitude+0.02, Longitude+0.02, 6000);
-		// await mapRender.RenderInvertCircle(_map!, Latitude, Longitude, 6000);
-		// await mapRender.RenderCircle(_map!, Latitude, Longitude, 600);
-		await mapRender.RenderStraightLine(_map!, Latitude, Longitude, 5);
+		await mapRender.OutOfBounds.RenderStraightLine(_map!, Latitude, Longitude, 5);
+		await mapRender.Overlay.RenderCircle(_map!, Latitude, Longitude, 600);
 	}
 }

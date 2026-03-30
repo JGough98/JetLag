@@ -6,6 +6,9 @@ using JetLag.Scripts.Extensions;
 using JetLag.Scripts.Factory;
 using JetLag.Scripts.Geomitry;
 using JetLag.Scripts.Render;
+using JetLag.Scripts.Factory.Interface;
+using JetLag.Scripts.Models;
+using Microsoft.AspNetCore.Components;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,9 +20,9 @@ builder.Services.AddLocalization();
 
 builder.Services
     .AddSingleton<ClientSettings>()
-    .RegisterFactory<IGeomitryCombinder, GeomitryCombinderFactory>()
-    .RegisterFactory<IMapLayerRender, MapLayerRenderFactory>()
-    .AddScoped<IMapRender, MapRender>();
+    .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, IHandleEvent>()
+    .RegisterFactory<GeomitryCombinderFactory, IGeomitryCombinder>()
+    .RegisterFactory<MapRenderFactory, MapRender>();
 
 var app = builder.Build();
 

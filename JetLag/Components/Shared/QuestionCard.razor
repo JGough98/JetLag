@@ -14,8 +14,7 @@
     <div class="question-card-grid">
         @foreach (var button in Buttons)
         {
-            var cmd = button.Command;
-            <button class="question-card-btn" @onclick="() => InvokeCommand(cmd)">
+            <button class="question-card-btn" @onclick="() => button.InvokeAsync()">
                 @if (!string.IsNullOrEmpty(button.ImageSrc))
                 {
                     <img src="@button.ImageSrc" alt="" />

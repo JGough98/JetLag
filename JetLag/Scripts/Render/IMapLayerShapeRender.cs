@@ -6,7 +6,7 @@ using Community.Blazor.MapLibre;
 /// <summary>
 /// Interface to render on a map.
 /// </summary>
-public interface IMapRender
+public interface IMapLayerShapeRender
 {
     /// <summary>
     /// 
