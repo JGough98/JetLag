@@ -39,10 +39,10 @@ public class MapLayerRender : IMapLayerRender
     }
 
 
-    public async Task Add(double[][] newCoordinates, MapLibre map) =>
+    public async Task Draw(double[][] newCoordinates, MapLibre map) =>
         await AddFeature(newCoordinates, map, _addCoordinatesDelagate);
 
-    public async Task AddInverted(double[][] newCoordinates, MapLibre map) =>
+    public async Task InvertDraw(double[][] newCoordinates, MapLibre map) =>
         await AddFeature(newCoordinates, map, _addInvertedCoordinatesDelagate);
 
     public async Task Clear(MapLibre map)

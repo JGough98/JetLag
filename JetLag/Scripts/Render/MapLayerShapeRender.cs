@@ -16,13 +16,13 @@ public class MapLayerShapeRender : IMapLayerShapeRender
 
 
     public async Task RenderCircle(MapLibre map, double latitude, double longitude, double radius)
-        => await _mapLayerRender.Add(CirclePolygon(latitude, longitude, radius), map);
+        => await _mapLayerRender.Draw(CirclePolygon(latitude, longitude, radius), map);
 
     public async Task RenderInvertCircle(MapLibre map, double latitude, double longitude, double radius)
-        => await _mapLayerRender.AddInverted(CirclePolygon(latitude, longitude, radius), map);
+        => await _mapLayerRender.InvertDraw(CirclePolygon(latitude, longitude, radius), map);
 
     public async Task RenderStraightLine(MapLibre map, double latitude, double longitude, double angle)
-        => await _mapLayerRender.Add(RectanclePolygon(latitude, longitude, angle), map);
+        => await _mapLayerRender.Draw(RectanclePolygon(latitude, longitude, angle), map);
 
 
     private double[][] CirclePolygon(double latitude, double longitude, double radius)
