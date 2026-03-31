@@ -20,7 +20,7 @@ builder.Services.AddLocalization();
 
 builder.Services
     .AddSingleton<ClientSettings>()
-    .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, IHandleEvent>()
+    .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()
     .RegisterFactory<GeomitryCombinderFactory, IGeomitryCombinder>()
     .RegisterFactory<MapRenderFactory, MapRender>();
 

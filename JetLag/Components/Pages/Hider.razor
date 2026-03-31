@@ -3,8 +3,9 @@
 @using JetLag.Scripts.Factory.Interface
 @using JetLag.Scripts.Models
 @using JetLag.Scripts.Render
+@using Community.Blazor.MapLibre.Models.Event
 
-@inject IFactory<IReadOnlyList<QuestionCardModel>, IHandleEvent> cardFactory
+@inject IFactory<IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput> cardFactory
 @inject MapRender mapRender
 
 
@@ -41,10 +42,14 @@
 
 	private IReadOnlyList<QuestionCardModel> _cards;
 
+	private bool _radarActive = false;
+	private Listener? _mouseMoveListener;
+	private Listener? _mapClickListener;
+
 
 	protected override void OnInitialized()
 	{
-		_cards = cardFactory.Create(this);
+		_cards = cardFactory.Create(new QuestionCardFactoryInput(this, HandleQuestionButton));
 
 		if (Latitude == 0 && Longitude == 0)
 		{
@@ -68,5 +73,41 @@
 	{
 		await mapRender.OutOfBounds.RenderStraightLine(_map!, Latitude, Longitude, 5);
 		await mapRender.Overlay.RenderCircle(_map!, Latitude, Longitude, 600);
+	}
+
+	private async Task HandleQuestionButton(QuestionButtonEventArgs args)
+	{
+		if (args.Title == "RADAR")
+			await ActivateRadar();
+	}
+
+	private async Task ActivateRadar()
+	{
+		if (_radarActive || _map is null) return;
+		_radarActive = true;
+
+		_mouseMoveListener = await _map.AddAsyncListener<MapMouseEvent>(
+			"mousemove",
+			async (e) =>
+			{
+				await mapRender.Overlay.ReplaceCircle(_map, e.LngLat.Latitude, e.LngLat.Longitude, 100);
+			});
+
+		_mapClickListener = await _map.AddAsyncListener<MapMouseEvent>(
+			"click",
+			async (e) =>
+			{
+				await mapRender.OutOfBounds.RenderCircle(_map, e.LngLat.Latitude, e.LngLat.Longitude, 100);
+				await mapRender.Overlay.Clear(_map);
+				await DeactivateRadar();
+			});
+	}
+
+	private Task DeactivateRadar()
+	{
+		_radarActive = false;
+		_mouseMoveListener = null;
+		_mapClickListener = null;
+		return Task.CompletedTask;
 	}
 }

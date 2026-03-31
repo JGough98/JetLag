@@ -24,6 +24,12 @@ public class MapLayerShapeRender : IMapLayerShapeRender
     public async Task RenderStraightLine(MapLibre map, double latitude, double longitude, double angle)
         => await _mapLayerRender.Draw(RectanclePolygon(latitude, longitude, angle), map);
 
+    public async Task ReplaceCircle(MapLibre map, double latitude, double longitude, double radius)
+        => await _mapLayerRender.Replace(CirclePolygon(latitude, longitude, radius), map);
+
+    public async Task Clear(MapLibre map)
+        => await _mapLayerRender.Clear(map);
+
 
     private double[][] CirclePolygon(double latitude, double longitude, double radius)
         => PolygonUtility

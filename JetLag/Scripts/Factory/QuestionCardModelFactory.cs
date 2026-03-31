@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace JetLag.Scripts.Factory
 {
-    public class QuestionCardModelFactory : IFactory<IReadOnlyList<QuestionCardModel>, IHandleEvent>
+    public class QuestionCardModelFactory : IFactory<IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>
     {
-        // Once the uiComponent task is completed the uiComponent will auto refresh on the page.
-        public IReadOnlyList<QuestionCardModel> Create(IHandleEvent uiComponent)
+        public IReadOnlyList<QuestionCardModel> Create(QuestionCardFactoryInput input)
         {
-            var eventCallBack =  EventCallback.Factory.Create<QuestionButtonEventArgs>(
-                uiComponent,
-                () => Task.CompletedTask);
+            var eventCallBack = EventCallback.Factory.Create<QuestionButtonEventArgs>(
+                input.Component,
+                (args) => input.OnButtonTapped(args));
 
 
             return new List<QuestionCardModel>()
@@ -25,7 +24,7 @@ namespace JetLag.Scripts.Factory
                         MainImage = "",
                         Buttons =
                         [
-                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = ""}, eventCallBack),
+                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = "THERMOMETER"}, eventCallBack),
                         ]
                     },
                     new QuestionCardModel
@@ -36,7 +35,7 @@ namespace JetLag.Scripts.Factory
                         MainImage = "",
                         Buttons =
                         [
-                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = ""}, eventCallBack),
+                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = "RADAR"}, eventCallBack),
                         ]
                     }
                 };

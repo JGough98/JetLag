@@ -13,4 +13,8 @@ public interface IMapLayerShapeRender
     public Task RenderCircle(MapLibre map, double latitude, double longitude, double radius);
 
     public Task RenderInvertCircle(MapLibre map, double latitude, double longitude, double radius);
+
+    public Task ReplaceCircle(MapLibre map, double latitude, double longitude, double radius);
+
+    public Task Clear(MapLibre map);
 }

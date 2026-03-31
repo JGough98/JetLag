@@ -9,5 +9,7 @@ public interface IMapLayerRender
 
     public Task InvertDraw(double[][] newCoordinates, MapLibre map);
 
+    public Task Replace(double[][] newCoordinates, MapLibre map);
+
     public Task Clear(MapLibre map);
 }
