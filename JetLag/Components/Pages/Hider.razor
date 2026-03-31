@@ -1,12 +1,9 @@
 @page "/hider"
 
-@using JetLag.Scripts.Factory.Interface
+@using JetLag.Scripts.Intialize
 @using JetLag.Scripts.Models
-@using JetLag.Scripts.Render
-@using Community.Blazor.MapLibre.Models.Event
 
-@inject IFactory<IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput> cardFactory
-@inject MapRender mapRender
+@inject IGameIntializer<MapLibre> gameIntializer
 
 
 <div class="hider-map-container">
@@ -38,19 +35,14 @@
 	public int ZoomLevel { get; set; }
 
 	private MapLibre? _map;
-	private MapOptions _parameters = new();
 
-	private IReadOnlyList<QuestionCardModel> _cards;
+	private MapOptions? _parameters;
 
-	private bool _radarActive = false;
-	private Listener? _mouseMoveListener;
-	private Listener? _mapClickListener;
+	private IReadOnlyList<QuestionCardModel>? _cards;
 
 
 	protected override void OnInitialized()
 	{
-		_cards = cardFactory.Create(new QuestionCardFactoryInput(this, HandleQuestionButton));
-
 		if (Latitude == 0 && Longitude == 0)
 		{
 			Latitude = 51.505;
@@ -67,47 +59,15 @@
 			Style = "https://tiles.openfreemap.org/styles/liberty",
 			MinZoom = 2
 		};
+
+		gameIntializer.Awake(uiComponent : this);
+		_cards = gameIntializer.Cards;
 	}
 
 	private async Task HandleMapLoaded(EventArgs args)
 	{
-		await mapRender.OutOfBounds.RenderStraightLine(_map!, Latitude, Longitude, 5);
-		await mapRender.Overlay.RenderCircle(_map!, Latitude, Longitude, 600);
-	}
-
-	private async Task HandleQuestionButton(QuestionButtonEventArgs args)
-	{
-		if (args.Title == "RADAR")
-			await ActivateRadar();
-	}
-
-	private async Task ActivateRadar()
-	{
-		if (_radarActive || _map is null) return;
-		_radarActive = true;
-
-		_mouseMoveListener = await _map.AddAsyncListener<MapMouseEvent>(
-			"mousemove",
-			async (e) =>
-			{
-				await mapRender.Overlay.ReplaceCircle(_map, e.LngLat.Latitude, e.LngLat.Longitude, 100);
-			});
-
-		_mapClickListener = await _map.AddAsyncListener<MapMouseEvent>(
-			"click",
-			async (e) =>
-			{
-				await mapRender.OutOfBounds.RenderCircle(_map, e.LngLat.Latitude, e.LngLat.Longitude, 100);
-				await mapRender.Overlay.Clear(_map);
-				await DeactivateRadar();
-			});
-	}
-
-	private Task DeactivateRadar()
-	{
-		_radarActive = false;
-		_mouseMoveListener = null;
-		_mapClickListener = null;
-		return Task.CompletedTask;
+		// TODO - Combine these methods together.
+		await gameIntializer.Intialize(_map!, uiComponent : this);
+		await gameIntializer.HandleMapLoaded(args);
 	}
 }

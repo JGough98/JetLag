@@ -35,7 +35,7 @@ namespace JetLag.Scripts.Factory
                         MainImage = "",
                         Buttons =
                         [
-                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = "RADAR"}, eventCallBack),
+                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 1000, Title = "RADAR"}, eventCallBack),
                         ]
                     }
                 };

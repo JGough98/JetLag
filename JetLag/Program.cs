@@ -5,10 +5,12 @@ using JetLag.Scripts.Data;
 using JetLag.Scripts.Extensions;
 using JetLag.Scripts.Factory;
 using JetLag.Scripts.Geomitry;
-using JetLag.Scripts.Render;
-using JetLag.Scripts.Factory.Interface;
+using JetLag.Scripts.Input;
 using JetLag.Scripts.Models;
-using Microsoft.AspNetCore.Components;
+using JetLag.Scripts.Render;
+using JetLag.Scripts;
+using Community.Blazor.MapLibre;
+using JetLag.Scripts.Intialize;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,8 +23,11 @@ builder.Services.AddLocalization();
 builder.Services
     .AddSingleton<ClientSettings>()
     .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()
-    .RegisterFactory<GeomitryCombinderFactory, IGeomitryCombinder>()
-    .RegisterFactory<MapRenderFactory, MapRender>();
+    .AddScoped<IMapMouseObserver, MapMouseObserver>()
+    .RegisterFactoryOutput<MapUIControllerFactory, MapUIController>()
+    .RegisterFactoryOutput<GeomitryCombinderFactory, IGeomitryCombinder>()
+    .RegisterFactoryOutput<MapRenderFactory, MapRender>()
+    .AddScoped<IGameIntializer<MapLibre>, MapLibreGameIntializer>();
 
 var app = builder.Build();
 
