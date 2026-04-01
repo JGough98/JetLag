@@ -3,7 +3,7 @@
 @using JetLag.Scripts.Intialize
 @using JetLag.Scripts.Models
 
-@inject IGameIntializer<MapLibre> gameIntializer
+@inject IMapOrchestrator<MapLibre> mapOrchestrator
 
 
 <div class="hider-map-container">
@@ -60,14 +60,15 @@
 			MinZoom = 2
 		};
 
-		gameIntializer.Awake(uiComponent : this);
-		_cards = gameIntializer.Cards;
+		mapOrchestrator.Initialize(uiComponent : this);
+		_cards = mapOrchestrator.Cards;
 	}
 
 	private async Task HandleMapLoaded(EventArgs args)
 	{
-		// TODO - Combine these methods together.
-		await gameIntializer.Intialize(_map!, uiComponent : this);
-		await gameIntializer.HandleMapLoaded(args);
+		await mapOrchestrator.MapLoaded(
+			_map!,
+			uiComponent : this,
+			args);
 	}
 }

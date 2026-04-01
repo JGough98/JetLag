@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 
-namespace JetLag.Scripts.Models;
 
+namespace JetLag.Scripts.Models;
 
 public class QuestionButtonModel
 {

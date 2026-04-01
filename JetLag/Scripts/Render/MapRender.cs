@@ -1,5 +1,7 @@
-namespace JetLag.Scripts.Render;
+using Community.Blazor.MapLibre;
 
+
+namespace JetLag.Scripts.Render;
 
 /// <summary>
 /// Class used call rendering between the <OutOfBounds> and <Overlay> layers.
@@ -16,4 +18,11 @@ public class MapRender
     /// </summary>
     /// <value></value>
     public required IMapLayerShapeRender Overlay { get; init; }
+
+
+    public void Intialize(MapLibre map)
+    {
+        OutOfBounds.Intialize(map);
+        Overlay.Intialize(map);
+    }
 }

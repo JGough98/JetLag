@@ -1,4 +1,3 @@
-using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Event;
 using JetLag.Scripts.Models;
 
@@ -9,8 +8,6 @@ public interface IMapAction
 {
     public string Name { get; }
 
-
-    public void Intialize(MapLibre map);
 
     public Task HandleClick(MapMouseEvent mapMouseEvent, QuestionButtonEventArgs questionButtonEventArgs);
 

@@ -1,8 +1,8 @@
-namespace JetLag.Scripts.Extensions;
-
 using JetLag.Scripts.Utility;
 using Microsoft.AspNetCore.Components;
 
+
+namespace JetLag.Scripts.Extensions;
 
 /// <summary>
 /// Extensions for the NavigationManager class.

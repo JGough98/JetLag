@@ -2,8 +2,8 @@ using JetLag.Scripts.Factory.Interface;
 using JetLag.Scripts.Geomitry;
 using JetLag.Scripts.Render;
 
-namespace JetLag.Scripts.Factory;
 
+namespace JetLag.Scripts.Factory;
 
 public class MapRenderFactory : IFactory<MapRender>
 {

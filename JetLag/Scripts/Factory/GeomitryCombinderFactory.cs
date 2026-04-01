@@ -1,8 +1,8 @@
 using JetLag.Scripts.Factory.Interface;
 using JetLag.Scripts.Geomitry;
 
-namespace JetLag.Scripts.Factory;
 
+namespace JetLag.Scripts.Factory;
 
 public class GeomitryCombinderFactory : IFactory<IGeomitryCombinder>
 {

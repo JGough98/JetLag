@@ -1,11 +1,11 @@
-namespace JetLag.Scripts.Render;
-
 using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Sources;
 using Community.Blazor.MapLibre.Models.Layers;
 using Community.Blazor.MapLibre.Models.Feature;
 using JetLag.Scripts.Geomitry;
 
+
+namespace JetLag.Scripts.Render;
 
 public class MapLayerRender : IMapLayerRender
 {

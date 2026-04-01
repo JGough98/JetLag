@@ -1,12 +1,10 @@
-using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Event;
-using JetLag.Scripts.Mechanics;
 using JetLag.Scripts.Models;
 
 
-namespace JetLag.Scripts;
+namespace JetLag.Scripts.Mechanics;
 
-public class MapUIController
+public class MapActionManager : IMapActionManager
 {
     private bool _mapIsIntialized = false;
 
@@ -20,21 +18,11 @@ public class MapUIController
     private bool CantTriggerMapAction => !_mapIsIntialized || _currentMapAction == null;
 
 
-    public MapUIController(IReadOnlyList<IMapAction> mapActions)
+    public MapActionManager(IReadOnlyList<IMapAction> mapActions)
     {
         _mapActions = mapActions.ToDictionary(k => k.Name, v => v);
     }
 
-
-    public void Intialize(MapLibre map)
-    {
-        var mapActions = _mapActions.Values.ToList();
-
-        foreach(var mapAction in mapActions)
-        {
-            mapAction.Intialize(map);
-        }
-    }
 
     public async Task HandleQuestionButton(QuestionButtonEventArgs questionButtonEventArgs)
     {

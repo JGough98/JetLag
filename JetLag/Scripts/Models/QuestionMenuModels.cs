@@ -1,6 +1,5 @@
 namespace JetLag.Scripts.Models;
 
-
 public class QuestionCardModel
 {
     public string Title { get; init; } = string.Empty;

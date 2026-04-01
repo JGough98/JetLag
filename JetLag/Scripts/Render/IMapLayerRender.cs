@@ -1,7 +1,7 @@
-namespace JetLag.Scripts.Render;
-
 using Community.Blazor.MapLibre;
 
+
+namespace JetLag.Scripts.Render;
 
 public interface IMapLayerRender
 {

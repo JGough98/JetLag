@@ -1,3 +1,6 @@
+namespace JetLag.Scripts.Utility;
+
+
 public static class StringUtility
 {
     /// <summary>

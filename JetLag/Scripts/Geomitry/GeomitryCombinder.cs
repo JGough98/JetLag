@@ -1,10 +1,8 @@
-namespace JetLag.Scripts.Geomitry;
-
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Union;
-using System.Collections.Generic;
-using System.Linq;
 
+
+namespace JetLag.Scripts.Geomitry;
 
 public class GeomitryCombinder : IGeomitryCombinder
 {
