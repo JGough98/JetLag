@@ -1,7 +1,7 @@
-namespace JetLag.Scripts.Geomitry;
+namespace JetLag.Scripts.Geometry;
 
 
-public interface IGeomitryCombinder
+public interface IGeometryCombinder
 {
     public bool InUse { get; }
 

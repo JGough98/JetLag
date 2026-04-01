@@ -1,14 +1,14 @@
 using JetLag.Scripts.Factory.Interface;
-using JetLag.Scripts.Geomitry;
+using JetLag.Scripts.Geometry;
 
 
 namespace JetLag.Scripts.Factory;
 
-public class GeomitryCombinderFactory : IFactory<IGeomitryCombinder>
+public class GeomitryCombinderFactory : IFactory<IGeometryCombinder>
 {
-    public IGeomitryCombinder Create()
+    public IGeometryCombinder Create()
     {
-        return new GeomitryCombinder(
+        return new GeometryCombinder(
             worldBounds:
             [
                 [-180, -90],

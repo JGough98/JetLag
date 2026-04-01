@@ -2,14 +2,14 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Union;
 
 
-namespace JetLag.Scripts.Geomitry;
+namespace JetLag.Scripts.Geometry;
 
-public class GeomitryCombinder : IGeomitryCombinder
+public class GeometryCombinder : IGeometryCombinder
 {
     private readonly GeometryFactory _geometryFactory;
 
-    private readonly List<Geometry> _positiveShapes;
-    private readonly List<Geometry> _negativeShapes;
+    private readonly List<NetTopologySuite.Geometries.Geometry> _positiveShapes;
+    private readonly List<NetTopologySuite.Geometries.Geometry> _negativeShapes;
 
     private readonly double[][] _worldBounds;
 
@@ -17,7 +17,7 @@ public class GeomitryCombinder : IGeomitryCombinder
     public bool InUse => _negativeShapes.Count > 0 || _positiveShapes.Count > 0;
 
 
-    public GeomitryCombinder(double[][] worldBounds, double precisionScale)
+    public GeometryCombinder(double[][] worldBounds, double precisionScale)
     {
         _worldBounds = worldBounds;
         _geometryFactory = new GeometryFactory(new PrecisionModel(precisionScale));
@@ -51,7 +51,7 @@ public class GeomitryCombinder : IGeomitryCombinder
     }
 
 
-    private double[][][][] GetGeometryCoordinates(Geometry? geometry)
+    private double[][][][] GetGeometryCoordinates(NetTopologySuite.Geometries.Geometry? geometry)
     {
         if (geometry == null || geometry.IsEmpty)
             return Array.Empty<double[][][]>();
@@ -77,11 +77,11 @@ public class GeomitryCombinder : IGeomitryCombinder
         return polygons.ToArray();
     }
 
-    private Geometry BuildFinalGeometry()
+    private NetTopologySuite.Geometries.Geometry BuildFinalGeometry()
     {
         var totalPositive = UnaryUnionOp.Union(_positiveShapes);
 
-        Geometry? totalNegative = null;
+        NetTopologySuite.Geometries.Geometry? totalNegative = null;
 
         if (_negativeShapes.Count > 0)
         {

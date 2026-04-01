@@ -4,7 +4,7 @@ using JetLag.Components;
 using JetLag.Scripts.Data;
 using JetLag.Scripts.Extensions;
 using JetLag.Scripts.Factory;
-using JetLag.Scripts.Geomitry;
+using JetLag.Scripts.Geometry;
 using JetLag.Scripts.Input;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
@@ -25,7 +25,7 @@ builder.Services
     .AddSingleton<ClientSettings>()
     .AddScoped<IMapMouseObserver, MapMouseObserver>()
     .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()
-    .RegisterFactoryOutput<GeomitryCombinderFactory, IGeomitryCombinder>()
+    .RegisterFactoryOutput<GeomitryCombinderFactory, IGeometryCombinder>()
     .RegisterFactoryOutput<MapRenderFactory, MapRender>()
     .RegisterFactoryOutput<MapActionManagerFactory, IMapActionManager>()
     .AddScoped<IMapOrchestrator<MapLibre>, MapLibreOrchestrator>();

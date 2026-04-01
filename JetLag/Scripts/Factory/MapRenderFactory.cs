@@ -1,5 +1,5 @@
 using JetLag.Scripts.Factory.Interface;
-using JetLag.Scripts.Geomitry;
+using JetLag.Scripts.Geometry;
 using JetLag.Scripts.Render;
 
 
@@ -7,10 +7,10 @@ namespace JetLag.Scripts.Factory;
 
 public class MapRenderFactory : IFactory<MapRender>
 {
-    private readonly IFactory<IGeomitryCombinder> _geomitryCombinderFactory;
+    private readonly IFactory<IGeometryCombinder> _geomitryCombinderFactory;
 
 
-    public MapRenderFactory(IFactory<IGeomitryCombinder> geomitryCombinderFactory)
+    public MapRenderFactory(IFactory<IGeometryCombinder> geomitryCombinderFactory)
     {
         _geomitryCombinderFactory = geomitryCombinderFactory;
     }

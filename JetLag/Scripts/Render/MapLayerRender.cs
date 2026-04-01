@@ -2,14 +2,14 @@ using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Sources;
 using Community.Blazor.MapLibre.Models.Layers;
 using Community.Blazor.MapLibre.Models.Feature;
-using JetLag.Scripts.Geomitry;
+using JetLag.Scripts.Geometry;
 
 
 namespace JetLag.Scripts.Render;
 
 public class MapLayerRender : IMapLayerRender
 {
-    private readonly IGeomitryCombinder _geomitryCombinder;
+    private readonly IGeometryCombinder _geomitryCombinder;
 
     private readonly Action<double[][]> _addCoordinatesDelagate;
     private readonly Action<double[][]> _addInvertedCoordinatesDelagate;
@@ -24,7 +24,7 @@ public class MapLayerRender : IMapLayerRender
 
 
     public MapLayerRender(
-        IGeomitryCombinder geomitryCombinder,
+        IGeometryCombinder geomitryCombinder,
         string sourceId,
         string layerId,
         string color,
