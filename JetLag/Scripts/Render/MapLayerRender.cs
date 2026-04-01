@@ -1,11 +1,11 @@
-namespace JetLag.Scripts.Render;
-
 using Community.Blazor.MapLibre;
 using Community.Blazor.MapLibre.Models.Sources;
 using Community.Blazor.MapLibre.Models.Layers;
 using Community.Blazor.MapLibre.Models.Feature;
 using JetLag.Scripts.Geomitry;
 
+
+namespace JetLag.Scripts.Render;
 
 public class MapLayerRender : IMapLayerRender
 {
@@ -19,6 +19,8 @@ public class MapLayerRender : IMapLayerRender
     private readonly string _color;
 
     private readonly double _opacity;
+
+    private bool _layerInitialized = false;
 
 
     public MapLayerRender(
@@ -39,17 +41,29 @@ public class MapLayerRender : IMapLayerRender
     }
 
 
-    public async Task Add(double[][] newCoordinates, MapLibre map) =>
+    public async Task Draw(double[][] newCoordinates, MapLibre map) =>
         await AddFeature(newCoordinates, map, _addCoordinatesDelagate);
 
-    public async Task AddInverted(double[][] newCoordinates, MapLibre map) =>
+    public async Task InvertDraw(double[][] newCoordinates, MapLibre map) =>
         await AddFeature(newCoordinates, map, _addInvertedCoordinatesDelagate);
+
+    public async Task Replace(double[][] newCoordinates, MapLibre map)
+    {
+        var wasInitialized = _layerInitialized;
+        _geomitryCombinder.Reset();
+        _addCoordinatesDelagate(newCoordinates);
+        if (wasInitialized)
+            await RefreshMapData(GetGeoJsonSource(), map);
+        else
+            await InitializeMapLayer(GetGeoJsonSource(), map);
+    }
 
     public async Task Clear(MapLibre map)
     {
         await map.RemoveLayer(_layerId);
         await map.RemoveSource(_sourceId);
         _geomitryCombinder.Reset();
+        _layerInitialized = false;
     }
 
 
@@ -81,6 +95,8 @@ public class MapLayerRender : IMapLayerRender
                 Paint = new FillLayerPaint { FillColor = _color, FillOpacity = _opacity }
             }
         );
+
+        _layerInitialized = true;
     }
 
     private async Task RefreshMapData(GeoJsonSource newFeature, MapLibre map)

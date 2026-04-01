@@ -1,5 +1,7 @@
-namespace JetLag.Scripts.Data;
+using JetLag.Scripts.Utility;
 
+
+namespace JetLag.Scripts.Data;
 
 /// <summary>
 /// Manages the state of the player.

@@ -1,40 +1,22 @@
-namespace JetLag.Scripts.Render;
-
 using Community.Blazor.MapLibre;
 
+
+namespace JetLag.Scripts.Render;
 
 /// <summary>
 /// Interface to render on a map.
 /// </summary>
 public interface IMapLayerShapeRender
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="map"></param>
-    /// <param name="latitude"></param>
-    /// <param name="longitude"></param>
-    /// <param name="angle"></param>
-    /// <returns></returns>
-    public Task RenderStraightLine(MapLibre map, double latitude, double longitude, double angle);
+    public void Intialize(MapLibre map);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="map"></param>
-    /// <param name="latitude"></param>
-    /// <param name="longitude"></param>
-    /// <param name="radius"></param>
-    /// <returns></returns>
-    public Task RenderCircle(MapLibre map, double latitude, double longitude, double radius);
+    public Task RenderStraightLine(double latitude, double longitude, double angle);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="map"></param>
-    /// <param name="latitude"></param>
-    /// <param name="longitude"></param>
-    /// <param name="radius"></param>
-    /// <returns></returns>
-    public Task RenderInvertCircle(MapLibre map, double latitude, double longitude, double radius);
+    public Task RenderCircle(double latitude, double longitude, double radius);
+
+    public Task RenderInvertCircle(double latitude, double longitude, double radius);
+
+    public Task ReplaceCircle(double latitude, double longitude, double radius);
+
+    public Task Clear();
 }

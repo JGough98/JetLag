@@ -3,43 +3,41 @@ using JetLag.Scripts.Models;
 using Microsoft.AspNetCore.Components;
 
 
-namespace JetLag.Scripts.Factory
+namespace JetLag.Scripts.Factory;
+
+public class QuestionCardModelFactory : IFactory<IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>
 {
-    public class QuestionCardModelFactory : IFactory<IReadOnlyList<QuestionCardModel>, IHandleEvent>
+    public IReadOnlyList<QuestionCardModel> Create(QuestionCardFactoryInput input)
     {
-        // Once the uiComponent task is completed the uiComponent will auto refresh on the page.
-        public IReadOnlyList<QuestionCardModel> Create(IHandleEvent uiComponent)
-        {
-            var eventCallBack =  EventCallback.Factory.Create<QuestionButtonEventArgs>(
-                uiComponent,
-                () => Task.CompletedTask);
+        var eventCallBack = EventCallback.Factory.Create<QuestionButtonEventArgs>(
+            input.Component,
+            (args) => input.OnButtonTapped(args));
 
 
-            return new List<QuestionCardModel>()
+        return new List<QuestionCardModel>()
+            {
+                new QuestionCardModel
                 {
-                    new QuestionCardModel
-                    {
-                        Title = "THERMOMETER",
-                        SubTitle = "DRAW 2, PICK 1",
-                        Color = "#f59e0b",
-                        MainImage = "",
-                        Buttons =
-                        [
-                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = ""}, eventCallBack),
-                        ]
-                    },
-                    new QuestionCardModel
-                    {
-                        Title = "RADAR",
-                        SubTitle = "DRAW 2, PICK 1",
-                        Color = "#f97316",
-                        MainImage = "",
-                        Buttons =
-                        [
-                            new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = ""}, eventCallBack),
-                        ]
-                    }
-                };
-        }
+                    Title = "THERMOMETER",
+                    SubTitle = "DRAW 2, PICK 1",
+                    Color = "#f59e0b",
+                    MainImage = "",
+                    Buttons =
+                    [
+                        new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 10, Title = "THERMOMETER"}, eventCallBack),
+                    ]
+                },
+                new QuestionCardModel
+                {
+                    Title = "RADAR",
+                    SubTitle = "DRAW 2, PICK 1",
+                    Color = "#f97316",
+                    MainImage = "",
+                    Buttons =
+                    [
+                        new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 1000, Title = "RADAR"}, eventCallBack),
+                    ]
+                }
+            };
     }
 }
