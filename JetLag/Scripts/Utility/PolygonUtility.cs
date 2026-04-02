@@ -40,7 +40,7 @@ public static class PolygonUtility
         double cosA = Math.Cos(angleRad);
         const double eps      = 1e-9;
         const double northLat =  85.051129; // Web Mercator north limit
-        const double southLat = -75.0;      // Southern limit — cuts off Antarctica
+        const double southLat = -85.051129; // Web Mercator south limit
         double latRange = northLat - southLat;
 
         // Find where the line (x = longitude + t*sinA, y = latitude + t*cosA)
