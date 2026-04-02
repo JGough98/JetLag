@@ -8,6 +8,7 @@ namespace JetLag.Scripts.Input;
 public interface IMapMouseObserver
 {
     public EventCallback<MapMouseEvent> OnMouseMove { get; set; }
+    public EventCallback<MapMouseEvent> OnMouseLeave { get; set; }
     public EventCallback<MapMouseEvent> OnClick { get; set; }
 
     public Task Subscribe(MapLibre map);

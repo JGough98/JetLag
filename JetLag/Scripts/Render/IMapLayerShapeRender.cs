@@ -12,6 +12,8 @@ public interface IMapLayerShapeRender
 
     public Task RenderStraightLine(double latitude, double longitude, double angle);
 
+    public Task ReplaceStraightLine(double latitude, double longitude, double angle);
+
     public Task RenderCircle(double latitude, double longitude, double radius);
 
     public Task RenderInvertCircle(double latitude, double longitude, double radius);

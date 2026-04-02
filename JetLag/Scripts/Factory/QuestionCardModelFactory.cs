@@ -35,7 +35,7 @@ public class QuestionCardModelFactory : IFactory<IReadOnlyList<QuestionCardModel
                     MainImage = "",
                     Buttons =
                     [
-                        new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 1000, Title = "RADAR"}, eventCallBack),
+                        new QuestionButtonModel ("", new QuestionButtonEventArgs(){ Size = 1000000, Title = "RADAR"}, eventCallBack),
                     ]
                 }
             };

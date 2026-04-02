@@ -20,6 +20,21 @@ public class LocalHiderProxy : IHiderProxy
         return Task.FromResult(distance <= radiusMeters);
     }
 
+    public Task<bool> LineHitHider(double latitude, double longitude, double angle)
+    {
+        double angleRad = angle * Math.PI / 180.0;
+        double sinA = Math.Sin(angleRad);
+        double cosA = Math.Cos(angleRad);
+
+        double dx = _hiderLongitude - longitude;
+        double dy = _hiderLatitude - latitude;
+
+        // The rendered polygon covers the clockwise-right side of the line.
+        // sign > 0 means the hider falls on that same side.
+        double sign = dx * cosA - dy * sinA;
+        return Task.FromResult(sign > 0);
+    }
+
 
     private static double HaversineDistance(double lat1, double lon1, double lat2, double lon2)
     {
