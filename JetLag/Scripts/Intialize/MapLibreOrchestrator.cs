@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components;
 
 using JetLag.Scripts.Factory.Interface;
 using JetLag.Scripts.Input;
-using JetLag.Scripts.Mechanics;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
+using JetLag.Scripts.Mechanics.MapAction;
 
 
 namespace JetLag.Scripts.Intialize;

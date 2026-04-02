@@ -1,17 +1,18 @@
+using Community.Blazor.MapLibre;
 using Microsoft.Extensions.FileProviders;
 
 using JetLag.Components;
+using JetLag.Scripts;
 using JetLag.Scripts.Data;
 using JetLag.Scripts.Extensions;
 using JetLag.Scripts.Factory;
 using JetLag.Scripts.Geometry;
 using JetLag.Scripts.Input;
+using JetLag.Scripts.Intialize;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
-using JetLag.Scripts;
-using Community.Blazor.MapLibre;
-using JetLag.Scripts.Intialize;
-using JetLag.Scripts.Mechanics;
+using JetLag.Scripts.Mechanics.Hider;
+using JetLag.Scripts.Mechanics.MapAction;
 
 
 var builder = WebApplication.CreateBuilder(args);

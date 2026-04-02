@@ -1,5 +1,6 @@
 using JetLag.Scripts.Factory.Interface;
-using JetLag.Scripts.Mechanics;
+using JetLag.Scripts.Mechanics.Hider;
+using JetLag.Scripts.Mechanics.MapAction;
 using JetLag.Scripts.Render;
 
 
