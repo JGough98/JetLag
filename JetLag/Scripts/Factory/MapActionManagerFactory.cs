@@ -21,5 +21,11 @@ public class MapActionManagerFactory : IFactory<IMapActionManager>
 
 
     public IMapActionManager Create() =>
-        new MapActionManager(new List<IMapAction>() { new RadarMapAction(_mapRender, _hiderProxy) });
+        new MapActionManager(
+            new List<IMapAction>()
+            {
+                new RadarMapAction(_mapRender, _hiderProxy),
+                new ThermometerMapAction(_mapRender, _hiderProxy)
+            }
+        );
 }
