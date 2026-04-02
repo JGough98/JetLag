@@ -115,6 +115,12 @@
     public async ValueTask DisposeAsync()
     {
         if (_jsModule is not null)
-            await _jsModule.DisposeAsync();
+        {
+            try
+            {
+                await _jsModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException) { }
+        }
     }
 }
