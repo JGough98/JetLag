@@ -21,7 +21,12 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddLocalization();
 
+// TODO: Swap to real server when available:
+// builder.Services.AddHttpClient<IHiderProxy, HiderProxy>(client =>
+//     client.BaseAddress = new Uri(builder.Configuration["HiderService:BaseUrl"]!));
+
 builder.Services
+    .AddScoped<IHiderProxy, LocalHiderProxy>()
     .AddSingleton<ClientSettings>()
     .AddScoped<IMapMouseObserver, MapMouseObserver>()
     .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()

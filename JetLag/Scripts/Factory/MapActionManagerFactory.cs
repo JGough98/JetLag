@@ -7,15 +7,18 @@ namespace JetLag.Scripts;
 
 public class MapActionManagerFactory : IFactory<IMapActionManager>
 {
-    private MapRender _mapRender;
+    private readonly MapRender _mapRender;
+
+    private readonly IHiderProxy _hiderProxy;
 
 
-    public MapActionManagerFactory(MapRender mapRender)
+    public MapActionManagerFactory(MapRender mapRender, IHiderProxy hiderProxy)
     {
         _mapRender = mapRender;
+        _hiderProxy = hiderProxy;
     }
 
 
     public IMapActionManager Create() =>
-        new MapActionManager(new List<IMapAction>() { new RadarMapAction(_mapRender) });
+        new MapActionManager(new List<IMapAction>() { new RadarMapAction(_mapRender, _hiderProxy) });
 }

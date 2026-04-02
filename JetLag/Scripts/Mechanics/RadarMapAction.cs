@@ -7,14 +7,18 @@ namespace JetLag.Scripts.Mechanics;
 
 public class RadarMapAction : IMapAction
 {
-    private MapRender _mapRender;
+    private readonly MapRender _mapRender;
+
+    private readonly IHiderProxy _hiderProxy;
+
 
     public string Name => "RADAR";
 
 
-    public RadarMapAction(MapRender mapRender)
+    public RadarMapAction(MapRender mapRender, IHiderProxy hiderProxy)
     {
         _mapRender = mapRender;
+        _hiderProxy = hiderProxy;
     }
 
 
@@ -23,11 +27,29 @@ public class RadarMapAction : IMapAction
         QuestionButtonEventArgs questionButtonEventArgs
     )
     {
-        await _mapRender.OutOfBounds.RenderCircle(
+        var hitHider = await _hiderProxy.HitHider(
             mapMouseEvent.LngLat.Latitude,
             mapMouseEvent.LngLat.Longitude,
             questionButtonEventArgs.Size
         );
+
+        if (hitHider)
+        {
+            await _mapRender.OutOfBounds.RenderInvertCircle(
+                mapMouseEvent.LngLat.Latitude,
+                mapMouseEvent.LngLat.Longitude,
+                questionButtonEventArgs.Size
+            );
+        }
+        else
+        {
+            await _mapRender.OutOfBounds.RenderCircle(
+                mapMouseEvent.LngLat.Latitude,
+                mapMouseEvent.LngLat.Longitude,
+                questionButtonEventArgs.Size
+            );
+        }
+
         await _mapRender.Overlay.Clear();
     }
 
