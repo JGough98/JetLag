@@ -14,15 +14,15 @@ public class MapLayerRender : IMapLayerRender
     private readonly Action<double[][]> _addCoordinatesDelagate;
     private readonly Action<double[][]> _addInvertedCoordinatesDelagate;
 
+    private readonly SemaphoreSlim _initLock;
+
+    private bool _layerInitialized;
+
     private readonly string _sourceId;
     private readonly string _layerId;
     private readonly string _color;
 
     private readonly double _opacity;
-
-    private bool _layerInitialized = false;
-
-    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
 
 
     public MapLayerRender(
@@ -40,6 +40,8 @@ public class MapLayerRender : IMapLayerRender
         _layerId = layerId;
         _color = color;
         _opacity = opacity;
+        _initLock = new SemaphoreSlim(1, 1);
+        _layerInitialized = false;
     }
 
 
