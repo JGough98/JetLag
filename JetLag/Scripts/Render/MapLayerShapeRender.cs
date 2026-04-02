@@ -31,6 +31,9 @@ public class MapLayerShapeRender : IMapLayerShapeRender
     public async Task RenderStraightLine(double latitude, double longitude, double angle) =>
         await _mapLayerRender.Draw(RectanclePolygon(latitude, longitude, angle), _map!);
 
+    public async Task ReplaceStraightLine(double latitude, double longitude, double angle) =>
+        await _mapLayerRender.Replace(RectanclePolygon(latitude, longitude, angle), _map!);
+
     public async Task ReplaceCircle(double latitude, double longitude, double radius) =>
         await _mapLayerRender.Replace(CirclePolygon(latitude, longitude, radius), _map!);
 
