@@ -17,7 +17,7 @@ public class GeomitryCombinderFactory : IFactory<IGeometryCombinder>
                 [-180, 90],
                 [-180, -90]
             ],
-            precisionScale : 1000
+            precisionScale : 1e8
         );
     }
 }
