@@ -1,8 +1,7 @@
-using System.Net.Http.Json;
 using JetLag.Scripts.Models;
 
 
-namespace JetLag.Scripts.Mechanics;
+namespace JetLag.Scripts.Mechanics.Hider;
 
 public class HiderProxy : IHiderProxy
 {
@@ -15,7 +14,7 @@ public class HiderProxy : IHiderProxy
     }
 
 
-    public async Task<bool> HitHider(double latitude, double longitude, int radiusMeters)
+    public async Task<bool> CircleHitHider(double latitude, double longitude, int radiusMeters)
     {
         var request = new RadarRequest(latitude, longitude, radiusMeters);
         var response = await _httpClient.PostAsJsonAsync("api/radar/hit", request);

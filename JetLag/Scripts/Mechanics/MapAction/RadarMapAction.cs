@@ -1,9 +1,10 @@
 using Community.Blazor.MapLibre.Models.Event;
+using JetLag.Scripts.Mechanics.Hider;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
 
 
-namespace JetLag.Scripts.Mechanics;
+namespace JetLag.Scripts.Mechanics.MapAction;
 
 public class RadarMapAction : IMapAction
 {
@@ -27,7 +28,7 @@ public class RadarMapAction : IMapAction
         QuestionButtonEventArgs questionButtonEventArgs
     )
     {
-        var hitHider = await _hiderProxy.HitHider(
+        var hitHider = await _hiderProxy.CircleHitHider(
             mapMouseEvent.LngLat.Latitude,
             mapMouseEvent.LngLat.Longitude,
             questionButtonEventArgs.Size

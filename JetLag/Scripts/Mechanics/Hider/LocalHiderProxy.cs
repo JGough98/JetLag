@@ -1,4 +1,4 @@
-namespace JetLag.Scripts.Mechanics;
+namespace JetLag.Scripts.Mechanics.Hider;
 
 public class LocalHiderProxy : IHiderProxy
 {
@@ -14,7 +14,7 @@ public class LocalHiderProxy : IHiderProxy
     }
 
 
-    public Task<bool> HitHider(double latitude, double longitude, int radiusMeters)
+    public Task<bool> CircleHitHider(double latitude, double longitude, int radiusMeters)
     {
         var distance = HaversineDistance(latitude, longitude, _hiderLatitude, _hiderLongitude);
         return Task.FromResult(distance <= radiusMeters);

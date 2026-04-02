@@ -2,7 +2,7 @@ using Community.Blazor.MapLibre.Models.Event;
 using JetLag.Scripts.Models;
 
 
-namespace JetLag.Scripts.Mechanics;
+namespace JetLag.Scripts.Mechanics.MapAction;
 
 public interface IMapAction
 {
