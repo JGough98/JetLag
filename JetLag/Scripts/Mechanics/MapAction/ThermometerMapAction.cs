@@ -72,5 +72,10 @@ namespace JetLag.Scripts.Mechanics.MapAction
 
             await _mapRender.Overlay.ReplaceStraightLine(_originLat, _originLng, _currentAngle);
         }
+
+        public Task HandleLeave(
+            MapMouseEvent mapMouseEvent,
+            QuestionButtonEventArgs questionButtonEventArgs
+            ) => _mapRender.Overlay.Clear();
     }
 }

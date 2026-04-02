@@ -21,10 +21,8 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
 
     private readonly MapRender _mapRender;
 
-    private IReadOnlyList<QuestionCardModel> _cards = Array.Empty<QuestionCardModel>();
 
-
-    public IReadOnlyList<QuestionCardModel> Cards => _cards;
+    public IReadOnlyList<QuestionCardModel> Cards { get; private set; } = Array.Empty<QuestionCardModel>();
 
 
     public MapLibreOrchestrator(
@@ -43,7 +41,7 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
 
     public void Initialize(IHandleEvent uiComponent)
     {
-        _cards = _cardFactory.Create(
+        Cards = _cardFactory.Create(
             new QuestionCardFactoryInput(uiComponent, _mapActionManager.HandleQuestionButton)
         );
     }
@@ -54,14 +52,17 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
 
         _mapRender.Intialize(map);
 
-        _mapMouseObserver.OnClick = EventCallback.Factory.Create<MapMouseEvent>(
-            uiComponent,
-            _mapActionManager.HandleClick
-        );
-
         _mapMouseObserver.OnMouseMove = EventCallback.Factory.Create<MapMouseEvent>(
             uiComponent,
             _mapActionManager.HandleMove
+        );
+        _mapMouseObserver.OnMouseLeave = EventCallback.Factory.Create<MapMouseEvent>(
+            uiComponent,
+            _mapActionManager.HandleLeave
+        );
+        _mapMouseObserver.OnClick = EventCallback.Factory.Create<MapMouseEvent>(
+            uiComponent,
+            _mapActionManager.HandleClick
         );
 
         await _mapActionManager.HandleMapLoaded(args);

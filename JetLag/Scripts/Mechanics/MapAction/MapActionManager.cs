@@ -39,6 +39,14 @@ public class MapActionManager : IMapActionManager
         _currentMapAction = _mapActions[questionButtonEventArgs.Title];
     }
 
+    public async Task HandleLeave(MapMouseEvent mapMouseEvent)
+    {
+        if (CantTriggerMapAction)
+            return;
+
+        await _currentMapAction!.HandleLeave(mapMouseEvent, _currentQuestionButtonEventArgs!);
+    }
+
     public async Task HandleClick(MapMouseEvent mapMouseEvent)
     {
         if (CantTriggerMapAction)

@@ -3,7 +3,6 @@ using JetLag.Scripts.Mechanics.Hider;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
 
-
 namespace JetLag.Scripts.Mechanics.MapAction;
 
 public class RadarMapAction : IMapAction
@@ -65,4 +64,9 @@ public class RadarMapAction : IMapAction
             questionButtonEventArgs.Size
         );
     }
+
+    public Task HandleLeave(
+        MapMouseEvent mapMouseEvent,
+        QuestionButtonEventArgs questionButtonEventArgs
+    ) => _mapRender.Overlay.Clear();
 }
