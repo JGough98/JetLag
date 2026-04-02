@@ -22,6 +22,8 @@ public class MapLayerRender : IMapLayerRender
 
     private bool _layerInitialized = false;
 
+    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+
 
     public MapLayerRender(
         IGeometryCombinder geomitryCombinder,
@@ -49,21 +51,36 @@ public class MapLayerRender : IMapLayerRender
 
     public async Task Replace(double[][] newCoordinates, MapLibre map)
     {
-        var wasInitialized = _layerInitialized;
-        _geomitryCombinder.Reset();
-        _addCoordinatesDelagate(newCoordinates);
-        if (wasInitialized)
-            await RefreshMapData(GetGeoJsonSource(), map);
-        else
-            await InitializeMapLayer(GetGeoJsonSource(), map);
+        await _initLock.WaitAsync();
+        try
+        {
+            _geomitryCombinder.Reset();
+            _addCoordinatesDelagate(newCoordinates);
+            if (_layerInitialized)
+                await RefreshMapData(GetGeoJsonSource(), map);
+            else
+                await InitializeMapLayer(GetGeoJsonSource(), map);
+        }
+        finally
+        {
+            _initLock.Release();
+        }
     }
 
     public async Task Clear(MapLibre map)
     {
-        await map.RemoveLayer(_layerId);
-        await map.RemoveSource(_sourceId);
-        _geomitryCombinder.Reset();
-        _layerInitialized = false;
+        await _initLock.WaitAsync();
+        try
+        {
+            await map.RemoveLayer(_layerId);
+            await map.RemoveSource(_sourceId);
+            _geomitryCombinder.Reset();
+            _layerInitialized = false;
+        }
+        finally
+        {
+            _initLock.Release();
+        }
     }
 
 
@@ -73,14 +90,20 @@ public class MapLayerRender : IMapLayerRender
         Action<double[][]> addDelgate
     )
     {
-        var inUse = _geomitryCombinder.InUse;
-
-        addDelgate(newCoordinates);
-
-        if (inUse)
-            await RefreshMapData(GetGeoJsonSource(), map);
-        else
-            await InitializeMapLayer(GetGeoJsonSource(), map);
+        await _initLock.WaitAsync();
+        try
+        {
+            var inUse = _geomitryCombinder.InUse;
+            addDelgate(newCoordinates);
+            if (inUse)
+                await RefreshMapData(GetGeoJsonSource(), map);
+            else
+                await InitializeMapLayer(GetGeoJsonSource(), map);
+        }
+        finally
+        {
+            _initLock.Release();
+        }
     }
 
     private async Task InitializeMapLayer(GeoJsonSource newFeature, MapLibre map)
