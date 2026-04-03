@@ -96,13 +96,60 @@ public class GeometryCombinder : IGeometryCombinder
             }
         }
 
+        NetTopologySuite.Geometries.Geometry result;
+
         if (totalNegative == null || totalNegative.IsEmpty)
-            return totalPositive;
+        {
+            result = totalPositive;
+        }
+        else
+        {
+            var worldPoly = CreatePolygon(_worldBounds);
+            var playerPossibleArea = worldPoly.Difference(totalNegative);
+            result = playerPossibleArea.Union(totalPositive);
+        }
+
+        return NormalizeToWorldBounds(result);
+    }
+
+    private NetTopologySuite.Geometries.Geometry NormalizeToWorldBounds(NetTopologySuite.Geometries.Geometry geometry)
+    {
+        var envelope = geometry.EnvelopeInternal;
+
+        if (envelope.MinX >= -180 && envelope.MaxX <= 180)
+            return geometry;
 
         var worldPoly = CreatePolygon(_worldBounds);
-        var playerPossibleArea = worldPoly.Difference(totalNegative);
+        var parts = new List<NetTopologySuite.Geometries.Geometry>();
 
-        return playerPossibleArea.Union(totalPositive);
+        var clipped = geometry.Intersection(worldPoly);
+        if (!clipped.IsEmpty)
+            parts.Add(clipped);
+
+        if (envelope.MaxX > 180)
+        {
+            var shifted = ShiftGeometryX(geometry, -360);
+            var wrappedPart = shifted.Intersection(worldPoly);
+            if (!wrappedPart.IsEmpty)
+                parts.Add(wrappedPart);
+        }
+
+        if (envelope.MinX < -180)
+        {
+            var shifted = ShiftGeometryX(geometry, 360);
+            var wrappedPart = shifted.Intersection(worldPoly);
+            if (!wrappedPart.IsEmpty)
+                parts.Add(wrappedPart);
+        }
+
+        return parts.Count == 0 ? geometry : UnaryUnionOp.Union(parts);
+    }
+
+    private static NetTopologySuite.Geometries.Geometry ShiftGeometryX(NetTopologySuite.Geometries.Geometry geometry, double xOffset)
+    {
+        var transform = new NetTopologySuite.Geometries.Utilities.AffineTransformation();
+        transform.Translate(xOffset, 0);
+        return transform.Transform(geometry.Copy());
     }
 
     private Polygon CreatePolygon(double[][] coords)
