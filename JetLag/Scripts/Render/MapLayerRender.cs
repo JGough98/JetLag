@@ -74,10 +74,13 @@ public class MapLayerRender : IMapLayerRender
         await _initLock.WaitAsync();
         try
         {
-            await map.RemoveLayer(_layerId);
-            await map.RemoveSource(_sourceId);
-            _geomitryCombinder.Reset();
-            _layerInitialized = false;
+            if(_layerInitialized)
+            {
+                await map.RemoveLayer(_layerId);
+                await map.RemoveSource(_sourceId);
+                _geomitryCombinder.Reset();
+                _layerInitialized = false;
+            }
         }
         finally
         {
