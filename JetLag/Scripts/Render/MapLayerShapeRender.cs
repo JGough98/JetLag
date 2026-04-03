@@ -47,5 +47,5 @@ public class MapLayerShapeRender : IMapLayerShapeRender
             .ToArray();
 
     private double[][] RectanclePolygon(double latitude, double longitude, double angle) =>
-        PolygonUtility.GenerateRectanclePolygon(latitude, longitude, angle).ToArray();
+        PolygonUtility.GenerateBandPolygon(latitude, longitude, angle).ToArray();
 }
