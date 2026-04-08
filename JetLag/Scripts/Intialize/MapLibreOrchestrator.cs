@@ -21,6 +21,8 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
 
     private readonly MapRender _mapRender;
 
+    private readonly RailwayLayerRender _railwayLayerRender;
+
 
     public IReadOnlyList<QuestionCardModel> Cards { get; private set; } = Array.Empty<QuestionCardModel>();
 
@@ -29,13 +31,15 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
         IMapMouseObserver mapMouseObserver,
         IFactory<IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput> cardFactory,
         IMapActionManager mapActionManager,
-        MapRender mapRender
+        MapRender mapRender,
+        RailwayLayerRender railwayLayerRender
     )
     {
         _mapMouseObserver = mapMouseObserver;
         _cardFactory = cardFactory;
         _mapActionManager = mapActionManager;
         _mapRender = mapRender;
+        _railwayLayerRender = railwayLayerRender;
     }
 
 
@@ -49,6 +53,8 @@ public class MapLibreOrchestrator : IMapOrchestrator<MapLibre>
     public async Task MapLoaded(MapLibre map, IHandleEvent uiComponent, EventArgs args)
     {
         await _mapMouseObserver.Subscribe(map);
+
+        await _railwayLayerRender.InitializeAsync(map);
 
         _mapRender.Intialize(map);
 

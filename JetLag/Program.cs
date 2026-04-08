@@ -1,4 +1,5 @@
 using Community.Blazor.MapLibre;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 using JetLag.Components;
@@ -11,11 +12,14 @@ using JetLag.Scripts.Input;
 using JetLag.Scripts.Intialize;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
+using JetLag.Scripts.Transit;
 using JetLag.Scripts.Mechanics.Hider;
 using JetLag.Scripts.Mechanics.MapAction;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+var dbPath = Path.Combine(builder.Environment.ContentRootPath, "Data", "gtfs.db");
 
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
@@ -25,6 +29,11 @@ builder.Services.AddLocalization();
 // TODO: Swap to real server when available:
 // builder.Services.AddHttpClient<IHiderProxy, HiderProxy>(client =>
 //     client.BaseAddress = new Uri(builder.Configuration["HiderService:BaseUrl"]!));
+
+builder.Services.AddDbContext<GtfsDbContext>(o => o.UseSqlite($"Data Source={dbPath}"));
+builder.Services.AddScoped<GtfsSeeder>();
+builder.Services.AddScoped<ITransitService, TransitService>();
+builder.Services.AddScoped<RailwayLayerRender>();
 
 builder.Services
     .AddScoped<IHiderProxy, LocalHiderProxy>()
@@ -71,5 +80,8 @@ app.UseStaticFiles(
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+using (var scope = app.Services.CreateScope())
+    await scope.ServiceProvider.GetRequiredService<GtfsSeeder>().SeedAsync();
 
 app.Run();
