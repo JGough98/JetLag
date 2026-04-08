@@ -61,24 +61,20 @@ public static class PolygonUtility
         double lat2 = latitude  + sinA * latOffDeg;
         double lng2 = longitude - cosA * lngOffDeg;
 
-        // Normalize longitudes to [-180, 180]: the perpendicular offset can push them
-        // outside the valid range (e.g. -186°), which causes GetTRange to find the wrong
-        // boundary intersections and collapses the band into a triangle.
-        while (lng1 >  180) lng1 -= 360;
-        while (lng1 < -180) lng1 += 360;
-        while (lng2 >  180) lng2 -= 360;
-        while (lng2 < -180) lng2 += 360;
-
         // Find where line (latO + t·cosA, lngO + t·sinA) exits the map boundary.
+        // When lngO is already outside [-180,180] (offset pushed it across the antimeridian),
+        // we skip the longitude validation on lat-boundary hits so that the resulting
+        // out-of-range coordinate is preserved for GeometryCombinder to wrap correctly.
         (double tLo, double tHi) GetTRange(double latO, double lngO)
         {
             var tVals = new List<double>();
+            bool originOutside = Math.Abs(lngO) > 180 + eps;
             if (Math.Abs(cosA) > eps)
             {
                 double t = (northLat - latO) / cosA;
-                if (Math.Abs(lngO + t * sinA) <= 180 + eps) tVals.Add(t);
+                if (originOutside || Math.Abs(lngO + t * sinA) <= 180 + eps) tVals.Add(t);
                 t = (southLat - latO) / cosA;
-                if (Math.Abs(lngO + t * sinA) <= 180 + eps) tVals.Add(t);
+                if (originOutside || Math.Abs(lngO + t * sinA) <= 180 + eps) tVals.Add(t);
             }
             if (Math.Abs(sinA) > eps)
             {
@@ -96,8 +92,11 @@ public static class PolygonUtility
         var (tLo1, tHi1) = GetTRange(lat1, lng1);
         var (tLo2, tHi2) = GetTRange(lat2, lng2);
 
+        // Longitude is intentionally NOT clamped: out-of-range values signal to
+        // GeometryCombinder.NormalizeToWorldBounds that the polygon crosses the
+        // antimeridian and needs to be split into two pieces.
         double[] Pt(double lng, double lat) =>
-            [Math.Clamp(lng, -180, 180), Math.Clamp(lat, southLat, northLat)];
+            [lng, Math.Clamp(lat, southLat, northLat)];
 
         double[] pLo1 = Pt(lng1 + tLo1 * sinA, lat1 + tLo1 * cosA);
         double[] pHi1 = Pt(lng1 + tHi1 * sinA, lat1 + tHi1 * cosA);
@@ -214,11 +213,11 @@ public static class PolygonUtility
         double tLo = tValues[0], tHi = tValues[^1];
 
         double[] pLo = [
-            Math.Clamp(longitude + tLo * sinA, -180, 180),
+            longitude + tLo * sinA,
             Math.Clamp(latitude  + tLo * cosA, southLat, northLat)
         ];
         double[] pHi = [
-            Math.Clamp(longitude + tHi * sinA, -180, 180),
+            longitude + tHi * sinA,
             Math.Clamp(latitude  + tHi * cosA, southLat, northLat)
         ];
 
@@ -252,7 +251,7 @@ public static class PolygonUtility
         {
             double t = tLo + (tHi - tLo) * i / segments;
             polygon.Add([
-                Math.Clamp(longitude + t * sinA, -180, 180),
+                longitude + t * sinA,
                 Math.Clamp(latitude  + t * cosA, southLat, northLat)
             ]);
         }
