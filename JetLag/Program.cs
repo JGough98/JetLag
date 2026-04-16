@@ -30,14 +30,13 @@ builder.Services.AddLocalization();
 // builder.Services.AddHttpClient<IHiderProxy, HiderProxy>(client =>
 //     client.BaseAddress = new Uri(builder.Configuration["HiderService:BaseUrl"]!));
 
-builder.Services.AddDbContext<GtfsDbContext>(o => o.UseSqlite($"Data Source={dbPath}"));
-builder.Services.AddScoped<GtfsSeeder>();
-builder.Services.AddScoped<ITransitService, TransitService>();
-builder.Services.AddScoped<RailwayLayerRender>();
-
 builder.Services
-    .AddScoped<IHiderProxy, LocalHiderProxy>()
     .AddSingleton<ClientSettings>()
+    .AddDbContext<GtfsDbContext>(o => o.UseSqlite($"Data Source={dbPath}"))
+    .AddScoped<GtfsSeeder>()
+    .AddScoped<ITransitService, TransitService>()
+    .AddScoped<RailwayLayerRender>()
+    .AddScoped<IHiderProxy, LocalHiderProxy>()
     .AddScoped<IMapMouseObserver, MapMouseObserver>()
     .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()
     .RegisterFactoryOutput<GeomitryCombinderFactory, IGeometryCombinder>()

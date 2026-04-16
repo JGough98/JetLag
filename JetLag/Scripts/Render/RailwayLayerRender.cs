@@ -13,10 +13,12 @@ public class RailwayLayerRender
 
     private readonly string _geojsonPath;
 
+
     public RailwayLayerRender(IWebHostEnvironment env)
     {
         _geojsonPath = Path.Combine(env.WebRootPath, "data", "railway-tracks.geojson");
     }
+
 
     public async Task InitializeAsync(MapLibre map)
     {
