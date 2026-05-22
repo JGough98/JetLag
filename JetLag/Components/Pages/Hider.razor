@@ -1,77 +1,378 @@
 @page "/hider"
 
+@using JetLag.Scripts.Data
+@using JetLag.Scripts.Data.Gtfs
+@using JetLag.Scripts.Execution
 @using JetLag.Scripts.Intialize
-
+@using JetLag.Scripts.Models
 
 @inject IMapOrchestrator<MapLibre> mapOrchestrator
+@inject PlanningState PlanningState
+@inject GameClock GameClock
+@inject IClockExecutionLoop ExecutionLoop
+@inject IWebHostEnvironment Env
+@implements IDisposable
 
 
 <div class="hider-map-container">
-	<MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
+    <MapLibre @ref="_map" Options="_parameters" OnLoad="HandleMapLoaded" Width="100%" Height="100%" />
 </div>
 
 <QuestionsMenu Cards="_cards.ToArray()" />
 <DeparturesPanel />
 
+@if (PlanningState.SelectedTripId is not null || _isPlaying)
+{
+    <div class="playback-controls">
+        <button class="playback-btn playback-btn--play"
+                @onclick="HandlePlay"
+                disabled="@(!_canPlay)">
+            &#9654;
+        </button>
+        <button class="playback-btn playback-btn--pause"
+                @onclick="HandlePause"
+                disabled="@(!_isPlaying)">
+            &#9646;&#9646;
+        </button>
+        <button class="playback-btn playback-btn--stop"
+                @onclick="HandleStop">
+            &#9632;
+        </button>
+        <span class="playback-clock">@FormatGameTime()</span>
+    </div>
+}
+
+@if (Env.IsDevelopment())
+{
+    <div class="debug-panel">
+        <span class="debug-label">DEV</span>
+        <button @onclick="DebugSelectT1">T1 Penn→Hicksville (delayed)</button>
+        <button @onclick="DebugSelectT2">T2 Hicksville→Penn (cancelled)</button>
+    </div>
+}
+
+@if (_currentOutcome is not null)
+{
+    <div class="outcome-panel outcome-panel--@(_currentOutcome.Reason.ToString().ToLower())">
+        <span class="outcome-icon">@GetOutcomeIcon(_currentOutcome)</span>
+        <p class="outcome-message">@GetOutcomeMessage(_currentOutcome)</p>
+        <button class="outcome-dismiss" @onclick="() => _currentOutcome = null">OK</button>
+    </div>
+}
+
 <style>
-	.hider-map-container {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 1000;
-		overflow: hidden;
-	}
+    .hider-map-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    .playback-controls {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1100;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(10, 16, 30, 0.92);
+        border: 1px solid rgba(251, 191, 36, 0.4);
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .playback-btn {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #fff;
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.1s ease, border-color 0.1s ease;
+    }
+
+    .playback-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .playback-btn:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    .playback-btn--play:not(:disabled) {
+        color: #4ade80;
+        border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    .playback-btn--stop {
+        color: #f87171;
+        border-color: rgba(248, 113, 113, 0.4);
+    }
+
+    .playback-clock {
+        color: #fbbf24;
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        min-width: 5rem;
+        text-align: center;
+        letter-spacing: 0.05em;
+    }
+
+    .outcome-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1200;
+        background: rgba(10, 16, 30, 0.96);
+        border-radius: 10px;
+        padding: 1.5rem 2rem;
+        min-width: 260px;
+        max-width: 360px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .outcome-panel--arrived {
+        border: 2px solid #4ade80;
+    }
+
+    .outcome-panel--delayed {
+        border: 2px solid #fbbf24;
+    }
+
+    .outcome-panel--cancelled {
+        border: 2px solid #f87171;
+    }
+
+    .outcome-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .outcome-message {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .outcome-dismiss {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        cursor: pointer;
+        padding: 0.4rem 1.25rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        transition: background-color 0.1s ease;
+    }
+
+    .outcome-dismiss:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .debug-panel {
+        position: fixed;
+        top: 0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1300;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(30, 10, 50, 0.9);
+        border: 1px solid #a855f7;
+        border-radius: 6px;
+        padding: 0.4rem 0.75rem;
+    }
+
+    .debug-label {
+        color: #a855f7;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+    }
+
+    .debug-panel button {
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        color: #d8b4fe;
+        cursor: pointer;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.72rem;
+        transition: background-color 0.1s ease;
+    }
+
+    .debug-panel button:hover {
+        background: rgba(168, 85, 247, 0.3);
+    }
 </style>
 
 @code {
-	[SupplyParameterFromQuery(Name = "lat")]
-	public double Latitude { get; set; }
+    [SupplyParameterFromQuery(Name = "lat")]
+    public double Latitude { get; set; }
 
-	[SupplyParameterFromQuery(Name = "lng")]
-	public double Longitude { get; set; }
+    [SupplyParameterFromQuery(Name = "lng")]
+    public double Longitude { get; set; }
 
-	[SupplyParameterFromQuery(Name = "zoom")]
-	public int ZoomLevel { get; set; }
+    [SupplyParameterFromQuery(Name = "zoom")]
+    public int ZoomLevel { get; set; }
 
-	private MapLibre? _map;
+    private MapLibre? _map;
+    private MapOptions? _parameters;
+    private IReadOnlyList<QuestionCardModel>? _cards;
 
-	private MapOptions? _parameters;
-
-	private IReadOnlyList<QuestionCardModel>? _cards;
-
-
-	protected override void OnInitialized()
-	{
-		if (Latitude == 0 && Longitude == 0)
-		{
-			Latitude = 51.505;
-			Longitude = -0.09;
-		}
-
-		if (ZoomLevel == 0)
-			ZoomLevel = 13;
-
-		_parameters = new MapOptions
-		{
-			RenderWorldCopies = false,
-			Center = new LngLat(Longitude, Latitude),
-			Zoom = ZoomLevel,
-			Style = "https://tiles.openfreemap.org/styles/liberty",
-			MinZoom = 2
-		};
-
-		mapOrchestrator.Initialize(uiComponent : this);
-		_cards = mapOrchestrator.Cards;
-	}
+    private bool _isPlaying;
+    private bool _canPlay => PlanningState.SelectedTripId is not null && !_isPlaying;
+    private ExecutionOutcome? _currentOutcome;
 
 
-	private async Task HandleMapLoaded(EventArgs args)
-	{
-		await mapOrchestrator.MapLoaded(
-			_map!,
-			uiComponent : this,
-			args);
-	}
+    protected override void OnInitialized()
+    {
+        if (Latitude == 0 && Longitude == 0)
+        {
+            Latitude = 51.505;
+            Longitude = -0.09;
+        }
+
+        if (ZoomLevel == 0)
+            ZoomLevel = 13;
+
+        _parameters = new MapOptions
+        {
+            RenderWorldCopies = false,
+            Center = new LngLat(Longitude, Latitude),
+            Zoom = ZoomLevel,
+            Style = "https://tiles.openfreemap.org/styles/liberty",
+            MinZoom = 2
+        };
+
+        mapOrchestrator.Initialize(uiComponent: this);
+        _cards = mapOrchestrator.Cards;
+
+        PlanningState.OnChange += HandlePlanningStateChange;
+        GameClock.OnTick += HandleClockTick;
+    }
+
+    private async Task HandleMapLoaded(EventArgs args)
+    {
+        await mapOrchestrator.MapLoaded(
+            _map!,
+            uiComponent: this,
+            args);
+    }
+
+    private async Task HandlePlay()
+    {
+        if (PlanningState.SelectedTripId is null) return;
+
+        _isPlaying = true;
+        _currentOutcome = null;
+
+        await mapOrchestrator.StartPlaybackAsync(
+            PlanningState.SelectedTripId,
+            outcome => InvokeAsync(() => HandlePlaybackPaused(outcome)));
+    }
+
+    private void HandlePause()
+    {
+        ExecutionLoop.Pause();
+        _isPlaying = false;
+    }
+
+    private async Task HandleResume()
+    {
+        _isPlaying = true;
+        await ExecutionLoop.ResumeAsync();
+    }
+
+    private void HandleStop()
+    {
+        mapOrchestrator.StopPlayback();
+        _isPlaying = false;
+        _currentOutcome = null;
+    }
+
+    private void HandlePlaybackPaused(ExecutionOutcome outcome)
+    {
+        _isPlaying = false;
+        _currentOutcome = outcome;
+        StateHasChanged();
+    }
+
+    private void HandlePlanningStateChange() => InvokeAsync(StateHasChanged);
+
+    private void HandleClockTick()
+    {
+        if (_isPlaying)
+            InvokeAsync(StateHasChanged);
+    }
+
+    private string FormatGameTime()
+    {
+        var t = GameClock.CurrentTime;
+        return $"{t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}";
+    }
+
+    private static string GetOutcomeIcon(ExecutionOutcome outcome) => outcome.Reason switch
+    {
+        ExecutionPauseReason.Arrived   => "✓",
+        ExecutionPauseReason.Delayed   => "⚠",
+        ExecutionPauseReason.Cancelled => "✕",
+        _                              => "?"
+    };
+
+    private static string GetOutcomeMessage(ExecutionOutcome outcome) => outcome.Reason switch
+    {
+        ExecutionPauseReason.Arrived when outcome.DelaySeconds <= 0 =>
+            $"Arrived at {outcome.StopName} on time.",
+        ExecutionPauseReason.Arrived =>
+            $"Arrived at {outcome.StopName} — {outcome.DelaySeconds / 60} min late.",
+        ExecutionPauseReason.Delayed =>
+            $"Your train to {outcome.StopName} is running {outcome.DelaySeconds / 60} minutes late.",
+        ExecutionPauseReason.Cancelled =>
+            $"Your train to {outcome.StopName} has been cancelled.",
+        _ => "Something happened."
+    };
+
+    private void DebugSelectT1()
+    {
+        var pennStation = new StopCoordinate("S1", "Penn Station", 40.7501, -73.9934);
+        IReadOnlyList<TrainDeparture> departures = new[] { new TrainDeparture("T1", "R1", "LIRR", "Hicksville", TimeSpan.FromHours(8)) };
+        PlanningState.SelectStop(pennStation, departures);
+        PlanningState.SelectTrip("T1");
+    }
+
+    private void DebugSelectT2()
+    {
+        var hicksville = new StopCoordinate("S6", "Hicksville", 40.7681, -73.5229);
+        IReadOnlyList<TrainDeparture> departures = new[] { new TrainDeparture("T2", "R1", "LIRR", "Penn Station", TimeSpan.FromHours(17)) };
+        PlanningState.SelectStop(hicksville, departures);
+        PlanningState.SelectTrip("T2");
+    }
+
+    public void Dispose()
+    {
+        PlanningState.OnChange -= HandlePlanningStateChange;
+        GameClock.OnTick -= HandleClockTick;
+        mapOrchestrator.Stop();
+    }
 }

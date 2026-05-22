@@ -50,4 +50,12 @@ public class TransitService : ITransitService
             .OrderBy(st => st.StopSequence)
             .Select(st => new StopCoordinate(st.Stop.StopId, st.Stop.StopName, st.Stop.StopLat, st.Stop.StopLon))
             .ToListAsync();
+
+    public async Task<IReadOnlyList<TripStopTime>> GetStopTimesForTrip(string tripId) =>
+        await _db.StopTimes
+            .Where(st => st.TripId == tripId)
+            .Include(st => st.Stop)
+            .OrderBy(st => st.StopSequence)
+            .Select(st => new TripStopTime(st.Stop.StopId, st.Stop.StopName, st.Stop.StopLat, st.Stop.StopLon, st.ArrivalSeconds))
+            .ToListAsync();
 }

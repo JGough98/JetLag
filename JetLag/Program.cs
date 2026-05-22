@@ -13,6 +13,7 @@ using JetLag.Scripts.Intialize;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
 using JetLag.Scripts.Transit;
+using JetLag.Scripts.Execution;
 using JetLag.Scripts.GtfsRt;
 using JetLag.Scripts.Mechanics.Hider;
 using JetLag.Scripts.Mechanics.MapAction;
@@ -41,9 +42,13 @@ builder.Services
     .AddScoped<GtfsRtParser>()
     .AddScoped<TripOutcomeCalculator>()
     .AddScoped<IHistoricalResolutionService, HistoricalResolutionService>()
+    .AddScoped<GtfsRtTestFeedGenerator>()
     .AddScoped<RailwayLayerRender>()
     .AddScoped<StationLayerRender>()
     .AddScoped<TripPathLayerRender>()
+    .AddScoped<PlayerMarkerRender>()
+    .AddScoped<ITripInterpolator, TripInterpolator>()
+    .AddScoped<IClockExecutionLoop, ClockExecutionLoop>()
     .AddScoped<PlanningState>()
     .AddScoped<IHiderProxy, LocalHiderProxy>()
     .AddScoped<IMapMouseObserver, MapMouseObserver>()
@@ -90,6 +95,9 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 using (var scope = app.Services.CreateScope())
+{
     await scope.ServiceProvider.GetRequiredService<GtfsSeeder>().SeedAsync();
+    scope.ServiceProvider.GetRequiredService<GtfsRtTestFeedGenerator>().Generate();
+}
 
 app.Run();

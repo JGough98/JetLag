@@ -1,0 +1,7 @@
+stop_id,stop_name,stop_lat,stop_lon
+S1,Penn Station,40.7501,-73.9934
+S2,Woodside,40.7448,-73.9026
+S3,Forest Hills,40.7197,-73.8449
+S4,Jamaica,40.7007,-73.7988
+S5,Mineola,40.7480,-73.6392
+S6,Hicksville,40.7681,-73.5229
