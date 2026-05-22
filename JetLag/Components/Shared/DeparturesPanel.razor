@@ -1,0 +1,159 @@
+@using JetLag.Scripts.Data
+@using JetLag.Scripts.Data.Gtfs
+@inject PlanningState PlanningState
+@implements IDisposable
+
+@if (PlanningState.IsDeparturesPanelVisible)
+{
+    <div class="departures-panel">
+        <div class="departures-panel-header">
+            <span class="departures-panel-title">@PlanningState.SelectedStop!.StopName</span>
+            <button class="departures-panel-close" @onclick="PlanningState.Dismiss">✕</button>
+        </div>
+        <div class="departures-panel-list">
+            @if (!PlanningState.Departures.Any())
+            {
+                <div class="departures-panel-empty">No upcoming departures</div>
+            }
+            @foreach (var dep in PlanningState.Departures)
+            {
+                var isSelected = dep.TripId == PlanningState.SelectedTripId;
+                <div class="departures-panel-row @(isSelected ? "departures-panel-row--selected" : "")"
+                     @onclick="() => PlanningState.SelectTrip(dep.TripId)">
+                    <span class="departures-panel-route">@(dep.RouteShortName ?? dep.RouteId)</span>
+                    <span class="departures-panel-headsign">@dep.TripHeadsign</span>
+                    <span class="departures-panel-time">
+                        @($"{dep.DepartureTime.Hours:D2}:{dep.DepartureTime.Minutes:D2}")
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        PlanningState.OnChange += HandleStateChange;
+    }
+
+    private void HandleStateChange() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        PlanningState.OnChange -= HandleStateChange;
+    }
+}
+
+<style>
+    .departures-panel {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        z-index: 1200;
+        width: 320px;
+        max-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(10, 16, 30, 0.92);
+        border-top: 2px solid #7f1d1d;
+        border-left: 2px solid #7f1d1d;
+        font-family: inherit;
+    }
+
+    .departures-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 1rem;
+        background-color: #991b1b;
+        flex-shrink: 0;
+    }
+
+    .departures-panel-title {
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .departures-panel-close {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0 0.25rem;
+        line-height: 1;
+        flex-shrink: 0;
+        transition: color 0.12s ease;
+    }
+
+    .departures-panel-close:hover {
+        color: #fff;
+    }
+
+    .departures-panel-list {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .departures-panel-empty {
+        padding: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .departures-panel-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(127, 29, 29, 0.3);
+        transition: background-color 0.1s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .departures-panel-row:hover {
+        background-color: rgba(153, 27, 27, 0.2);
+    }
+
+    .departures-panel-row--selected {
+        border-left-color: #fbbf24;
+        background-color: rgba(251, 191, 36, 0.08);
+    }
+
+    .departures-panel-route {
+        background-color: #7f1d1d;
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.4rem;
+        border-radius: 3px;
+        flex-shrink: 0;
+        letter-spacing: 0.03em;
+    }
+
+    .departures-panel-headsign {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.8rem;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .departures-panel-time {
+        color: #fbbf24;
+        font-size: 0.8rem;
+        font-weight: 600;
+        flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
+    }
+</style>

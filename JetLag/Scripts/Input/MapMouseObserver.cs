@@ -41,7 +41,7 @@ public class MapMouseObserver : IMapMouseObserver
 
     private Task HandleClick(MapMouseEvent e) => Handle(e, OnClick);
 
-    private Task Handle(MapMouseEvent e, EventCallback<MapMouseEvent> handler)
+    private static Task Handle(MapMouseEvent e, EventCallback<MapMouseEvent> handler)
     {
         if (handler.HasDelegate)
             return handler.InvokeAsync(e);
