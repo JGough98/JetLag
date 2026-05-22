@@ -1,5 +1,6 @@
 using JetLag.Scripts.Data;
 using JetLag.Scripts.Data.Gtfs;
+using JetLag.Scripts.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JetLag.Scripts.Transit;
@@ -36,4 +37,17 @@ public class TransitService : ITransitService
             ))
             .ToListAsync();
     }
+
+    public async Task<IReadOnlyList<StopCoordinate>> GetAllStops() =>
+        await _db.Stops
+            .Select(s => new StopCoordinate(s.StopId, s.StopName, s.StopLat, s.StopLon))
+            .ToListAsync();
+
+    public async Task<IReadOnlyList<StopCoordinate>> GetStopsForTrip(string tripId) =>
+        await _db.StopTimes
+            .Where(st => st.TripId == tripId)
+            .Include(st => st.Stop)
+            .OrderBy(st => st.StopSequence)
+            .Select(st => new StopCoordinate(st.Stop.StopId, st.Stop.StopName, st.Stop.StopLat, st.Stop.StopLon))
+            .ToListAsync();
 }

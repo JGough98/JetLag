@@ -20,6 +20,7 @@ using JetLag.Scripts.Mechanics.MapAction;
 var builder = WebApplication.CreateBuilder(args);
 
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "Data", "gtfs.db");
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
 
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
@@ -36,6 +37,9 @@ builder.Services
     .AddScoped<GtfsSeeder>()
     .AddScoped<ITransitService, TransitService>()
     .AddScoped<RailwayLayerRender>()
+    .AddScoped<StationLayerRender>()
+    .AddScoped<TripPathLayerRender>()
+    .AddScoped<PlanningState>()
     .AddScoped<IHiderProxy, LocalHiderProxy>()
     .AddScoped<IMapMouseObserver, MapMouseObserver>()
     .RegisterConcreteFactory<QuestionCardModelFactory, IReadOnlyList<QuestionCardModel>, QuestionCardFactoryInput>()
