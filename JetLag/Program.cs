@@ -13,6 +13,7 @@ using JetLag.Scripts.Intialize;
 using JetLag.Scripts.Models;
 using JetLag.Scripts.Render;
 using JetLag.Scripts.Transit;
+using JetLag.Scripts.GtfsRt;
 using JetLag.Scripts.Mechanics.Hider;
 using JetLag.Scripts.Mechanics.MapAction;
 
@@ -36,6 +37,10 @@ builder.Services
     .AddDbContext<GtfsDbContext>(o => o.UseSqlite($"Data Source={dbPath}"))
     .AddScoped<GtfsSeeder>()
     .AddScoped<ITransitService, TransitService>()
+    .AddSingleton<GameClock>()
+    .AddScoped<GtfsRtParser>()
+    .AddScoped<TripOutcomeCalculator>()
+    .AddScoped<IHistoricalResolutionService, HistoricalResolutionService>()
     .AddScoped<RailwayLayerRender>()
     .AddScoped<StationLayerRender>()
     .AddScoped<TripPathLayerRender>()
